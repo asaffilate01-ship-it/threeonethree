@@ -2,9 +2,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, FolderKanban, ListTodo, PoundSterling,
-  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight
+  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut
 } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const NAV_ITEMS = [
   { path: '/',              label: 'Overview',      icon: LayoutDashboard },
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { signOut, user } = useAuth();
 
   return (
     <aside className={cn(
@@ -65,8 +67,11 @@ export default function Sidebar() {
 
       {/* Footer */}
       {!collapsed && (
-        <div className="p-4 border-t border-sidebar-border">
-          <div className="text-xs text-muted-foreground">18 projects · Amer</div>
+        <div className="p-4 border-t border-sidebar-border space-y-2">
+          <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
+          <button onClick={signOut} className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <LogOut size={14} /> Sign out
+          </button>
         </div>
       )}
     </aside>
