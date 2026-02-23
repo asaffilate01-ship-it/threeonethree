@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -9,6 +9,12 @@ export type ProjectPlatform = Tables<'project_platforms'>;
 export type ProjectSurface = Tables<'project_surfaces'>;
 export type ChecklistTemplateItem = Tables<'checklist_template_items'>;
 export type ProjectChecklistItem = Tables<'project_checklist_items'>;
+export type Hosting = Tables<'hosting'>;
+export type EmailService = Tables<'email_services'>;
+export type SslCertificate = Tables<'ssl_certificates'>;
+export type Cost = Tables<'costs'>;
+export type Integration = Tables<'integrations'>;
+export type ProjectIntegration = Tables<'project_integrations'>;
 
 export interface ProjectWithRelations extends Project {
   domains: Domain[];
@@ -18,6 +24,12 @@ export interface ProjectWithRelations extends Project {
     checklist_template_items: ChecklistTemplateItem | null;
   })[];
   tasks: Task[];
+  hosting: Hosting[];
+  email_services: EmailService[];
+  costs: Cost[];
+  project_integrations: (ProjectIntegration & {
+    integrations: Integration | null;
+  })[];
 }
 
 export function useProjects() {
@@ -46,7 +58,11 @@ export function useProjectWithRelations(id: string) {
           project_platforms(*),
           project_surfaces(*),
           project_checklist_items(*, checklist_template_items(*)),
-          tasks(*)
+          tasks(*),
+          hosting(*),
+          email_services(*),
+          costs(*),
+          project_integrations(*, integrations(*))
         `)
         .eq('id', id)
         .single();
@@ -108,6 +124,107 @@ export function useDomains() {
         .order('domain_name');
       if (error) throw error;
       return data;
+    },
+  });
+}
+
+export function useHosting() {
+  return useQuery({
+    queryKey: ['hosting'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('hosting')
+        .select('*, projects(name, code)')
+        .order('provider');
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useEmailServices() {
+  return useQuery({
+    queryKey: ['email-services'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('email_services')
+        .select('*, projects(name, code)')
+        .order('provider');
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useSslCertificates() {
+  return useQuery({
+    queryKey: ['ssl-certificates'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ssl_certificates')
+        .select('*, domains(domain_name, projects(name, code))')
+        .order('expiry_date');
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useCosts() {
+  return useQuery({
+    queryKey: ['costs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('costs')
+        .select('*, projects(name, code)')
+        .order('cost_name');
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useIntegrations() {
+  return useQuery({
+    queryKey: ['integrations'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('integrations')
+        .select('*, project_integrations(*, projects(name, code))')
+        .order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useProjectIntegrations() {
+  return useQuery({
+    queryKey: ['project-integrations'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('project_integrations')
+        .select('*, integrations(*), projects(name, code)')
+        .order('is_live', { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useToggleChecklistItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, is_done }: { id: string; is_done: boolean }) => {
+      const { error } = await supabase
+        .from('project_checklist_items')
+        .update({ is_done, done_at: is_done ? new Date().toISOString() : null })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['project'] });
+      queryClient.invalidateQueries({ queryKey: ['launch-readiness'] });
     },
   });
 }
