@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
   Bug, Plus, Search, Filter, CheckCircle2, XCircle, AlertTriangle,
-  Clock, Eye, Lightbulb, ChevronDown
+  Clock, Eye, Lightbulb, ChevronDown, Download
 } from 'lucide-react';
 
 const CATEGORIES = ['bug', 'omission', 'recommendation', 'ux_issue', 'performance', 'security', 'accessibility'] as const;
@@ -149,10 +149,28 @@ export default function QaDashboard() {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">QA & Testing Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-1">Track bugs, omissions, and recommendations</p>
         </div>
-        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="gap-1.5 text-xs"><Plus size={14} /> Report Issue</Button>
-          </DialogTrigger>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => {
+            const csv = [
+              ['Title','Category','Severity','Status','Project','Reporter','Assigned','Environment','Created'].join(','),
+              ...allIssues.map(i => [
+                `"${i.title.replace(/"/g,'""')}"`, i.category, i.severity, i.status,
+                (i as any).projects?.code || '', i.reported_by || '', i.assigned_to || '',
+                i.environment || '', new Date(i.created_at).toLocaleDateString()
+              ].join(','))
+            ].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'qa-issues.csv'; a.click();
+            URL.revokeObjectURL(url);
+            toast.success('CSV exported');
+          }}>
+            <Download size={14} /> Export CSV
+          </Button>
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="gap-1.5 text-xs"><Plus size={14} /> Report Issue</Button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Report QA Issue</DialogTitle></DialogHeader>
             <form onSubmit={e => { e.preventDefault(); createMutation.mutate(); }} className="space-y-4">
@@ -229,6 +247,7 @@ export default function QaDashboard() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* KPIs */}

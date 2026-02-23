@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useProjectBurn, useCosts, useProjects } from '@/hooks/useProjectData';
 import { PoundSterling, TrendingUp, AlertTriangle, Pause } from 'lucide-react';
+import CreateCostModal from '@/components/modals/CreateCostModal';
 
 export default function Costs() {
   const { data: burn, isLoading: burnLoading } = useProjectBurn();
@@ -28,9 +29,12 @@ export default function Costs() {
 
   return (
     <div className="space-y-6 max-w-6xl">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Cost Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">Group Financial Exposure Monitor</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Cost Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">Group Financial Exposure Monitor</p>
+        </div>
+        <CreateCostModal />
       </div>
 
       {/* Summary KPIs */}
