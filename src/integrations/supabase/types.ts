@@ -762,6 +762,91 @@ export type Database = {
         }
         Relationships: []
       }
+      qa_issues: {
+        Row: {
+          actual_result: string | null
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string | null
+          environment: string | null
+          expected_result: string | null
+          id: string
+          project_id: string
+          recommendation: string | null
+          reported_by: string | null
+          resolved_at: string | null
+          screenshot_url: string | null
+          severity: string
+          status: string
+          steps_to_reproduce: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actual_result?: string | null
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          environment?: string | null
+          expected_result?: string | null
+          id?: string
+          project_id: string
+          recommendation?: string | null
+          reported_by?: string | null
+          resolved_at?: string | null
+          screenshot_url?: string | null
+          severity?: string
+          status?: string
+          steps_to_reproduce?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actual_result?: string | null
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          environment?: string | null
+          expected_result?: string | null
+          id?: string
+          project_id?: string
+          recommendation?: string | null
+          reported_by?: string | null
+          resolved_at?: string | null
+          screenshot_url?: string | null
+          severity?: string
+          status?: string
+          steps_to_reproduce?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qa_issues_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qa_issues_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qa_issues_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ssl_certificates: {
         Row: {
           annual_cost_gbp: number | null

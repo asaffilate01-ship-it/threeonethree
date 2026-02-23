@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, FolderKanban, ListTodo, PoundSterling,
-  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut
+  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut, Bug
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { path: '/infra',         label: 'Domains & Infra', icon: Globe },
   { path: '/integrations',  label: 'Integrations',  icon: Puzzle },
   { path: '/checklists',    label: 'Checklists',    icon: ClipboardList },
+  { path: '/qa',            label: 'QA & Testing',  icon: Bug },
   { path: '/reports',       label: 'Reports',       icon: BarChart3 },
 ];
 

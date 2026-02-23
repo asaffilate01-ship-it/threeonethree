@@ -14,6 +14,7 @@ import Infra from "@/pages/Infra";
 import Integrations from "@/pages/Integrations";
 import Checklists from "@/pages/Checklists";
 import Reports from "@/pages/Reports";
+import QaDashboard from "@/pages/QaDashboard";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -44,6 +45,7 @@ function ProtectedRoutes() {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/checklists" element={<Checklists />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/qa" element={<QaDashboard />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
