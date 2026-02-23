@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { useProjectWithRelations, useToggleChecklistItem } from '@/hooks/useProjectData';
 import StageBadge from '@/components/badges/StageBadge';
 import ReadinessBar from '@/components/badges/ReadinessBar';
+import ProjectSettingsModal from '@/components/modals/ProjectSettingsModal';
+import AssignChecklistModal from '@/components/modals/AssignChecklistModal';
 import { ArrowLeft, ExternalLink, CheckCircle2, Circle, AlertTriangle, Globe, Server, Mail, Shield, Puzzle } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -81,9 +83,13 @@ export default function ProjectDetail() {
               </div>
             )}
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-foreground">{readinessPercent}%</div>
-            <div className="text-xs text-muted-foreground">Launch Ready</div>
+          <div className="flex items-center gap-2">
+            <ProjectSettingsModal projectId={project.id} projectName={project.name} />
+            <AssignChecklistModal projectId={project.id} projectName={project.name} />
+            <div className="text-right">
+              <div className="text-2xl font-bold text-foreground">{readinessPercent}%</div>
+              <div className="text-xs text-muted-foreground">Launch Ready</div>
+            </div>
           </div>
         </div>
 
