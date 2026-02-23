@@ -1,5 +1,6 @@
-import { Search, Plus, Bell } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Search, Bell } from 'lucide-react';
+import CreateProjectModal from '@/components/modals/CreateProjectModal';
+import CreateTaskModal from '@/components/modals/CreateTaskModal';
 
 export default function Topbar() {
   return (
@@ -16,10 +17,8 @@ export default function Topbar() {
 
       {/* Actions */}
       <div className="flex items-center gap-2">
-        <Button size="sm" variant="outline" className="gap-1.5 text-xs">
-          <Plus size={14} />
-          Quick Add
-        </Button>
+        <CreateTaskModal />
+        <CreateProjectModal />
         <button className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
           <Bell size={18} />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
