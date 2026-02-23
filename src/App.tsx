@@ -12,6 +12,8 @@ import Tasks from "@/pages/Tasks";
 import Costs from "@/pages/Costs";
 import Infra from "@/pages/Infra";
 import Integrations from "@/pages/Integrations";
+import Checklists from "@/pages/Checklists";
+import Reports from "@/pages/Reports";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -40,8 +42,8 @@ function ProtectedRoutes() {
         <Route path="/costs" element={<Costs />} />
         <Route path="/infra" element={<Infra />} />
         <Route path="/integrations" element={<Integrations />} />
-        <Route path="/checklists" element={<Dashboard />} />
-        <Route path="/reports" element={<Dashboard />} />
+        <Route path="/checklists" element={<Checklists />} />
+        <Route path="/reports" element={<Reports />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
