@@ -659,6 +659,64 @@ export type Database = {
           },
         ]
       }
+      project_settings: {
+        Row: {
+          created_at: string
+          id: string
+          is_sensitive: boolean
+          notes: string | null
+          project_id: string
+          setting_group: string
+          setting_key: string
+          setting_value: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_sensitive?: boolean
+          notes?: string | null
+          project_id: string
+          setting_group: string
+          setting_key: string
+          setting_value?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_sensitive?: boolean
+          notes?: string | null
+          project_id?: string
+          setting_group?: string
+          setting_key?: string
+          setting_value?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_settings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_settings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_settings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_surfaces: {
         Row: {
           auth_required: boolean
