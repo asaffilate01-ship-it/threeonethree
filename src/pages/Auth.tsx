@@ -80,6 +80,23 @@ export default function Auth() {
             {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
           </button>
         </div>
+
+        {/* Dev quick login */}
+        {import.meta.env.DEV && (
+          <button
+            type="button"
+            onClick={() => {
+              setEmail('admin@groupcontrol.app');
+              setPassword('Admin123!');
+              setIsSignUp(false);
+            }}
+            className="mt-3 w-full flex items-center justify-center gap-2 text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+            title="Fill dev credentials"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+            Dev Login
+          </button>
+        )}
       </motion.div>
     </div>
   );
