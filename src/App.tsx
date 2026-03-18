@@ -47,6 +47,7 @@ function ProtectedRoutes() {
         <Route path="/checklists" element={<Checklists />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/qa" element={<QaDashboard />} />
+        <Route path="/users" element={<UserManagement />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
