@@ -245,6 +245,7 @@ export default function ProjectDetail() {
                 <span className={cn("text-[10px] px-2 py-0.5 rounded font-bold uppercase",
                   p.delivery_type === 'saas_only' ? "bg-info/15 text-info" :
                   p.delivery_type === 'app_only' ? "bg-warning/15 text-warning" :
+                  p.delivery_type === 'app_with_landing' ? "bg-accent/15 text-accent-foreground" :
                   "bg-primary/15 text-primary"
                 )}>{p.delivery_type.replace(/_/g, ' ')}</span>
               )}
