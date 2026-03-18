@@ -338,13 +338,60 @@ export default function ProjectDetail() {
             <div className="glass-card rounded-xl p-5">
               <h3 className="text-sm font-semibold text-foreground mb-3">Delivery Type</h3>
               <Select value={p.delivery_type || 'saas_only'} onValueChange={v => { supabase.from('projects').update({ delivery_type: v } as any).eq('id', project.id).then(() => queryClient.invalidateQueries({ queryKey: ['project', project.id] })); }}>
-                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="saas_only">SaaS Only</SelectItem>
                   <SelectItem value="saas_and_app">SaaS & App</SelectItem>
                   <SelectItem value="app_only">App Only</SelectItem>
+                  <SelectItem value="app_with_landing">App with Landing Page</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Multi-country */}
+            <div className="glass-card rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">Multi-Country</h3>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Checkbox checked={!!p.is_multi_country} onCheckedChange={v => toggleProjectField('is_multi_country', !!v)} />
+                    <Label className="text-xs">This project operates in multiple countries</Label>
+                  </div>
+                </div>
+                {p.is_multi_country && (
+                  <AddItemModal title="Add Country" fields={[
+                    { key: 'country_name', label: 'Country Name' },
+                    { key: 'country_code', label: 'Country Code (e.g. GB, US, AE)' },
+                    { key: 'currency', label: 'Currency (e.g. GBP, USD, AED)' },
+                    { key: 'notes', label: 'Notes', type: 'textarea' },
+                  ]} onSave={async (data) => {
+                    const { error } = await supabase.from('project_countries' as any).insert({
+                      project_id: project.id, country_name: data.country_name,
+                      country_code: (data.country_code || '').toUpperCase(), currency: (data.currency || 'GBP').toUpperCase(), notes: data.notes
+                    });
+                    if (error) { toast.error(error.message); return; }
+                    queryClient.invalidateQueries({ queryKey: ['project', project.id] });
+                    toast.success('Country added');
+                  }} />
+                )}
+              </div>
+              {p.is_multi_country && (p.project_countries || []).length > 0 && (
+                <div className="space-y-2 mt-3">
+                  {(p.project_countries || []).map((c: any) => (
+                    <div key={c.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/20 border border-border/30">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-foreground bg-muted px-1.5 py-0.5 rounded">{c.country_code}</span>
+                        <span className="text-sm text-foreground">{c.country_name}</span>
+                        <span className="text-xs text-muted-foreground">{c.currency}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {c.notes && <span className="text-xs text-muted-foreground">{c.notes}</span>}
+                        <button onClick={() => deleteItem('project_countries', c.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={12} /></button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Domains */}
