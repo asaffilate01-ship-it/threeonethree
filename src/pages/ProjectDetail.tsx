@@ -456,9 +456,24 @@ export default function ProjectDetail() {
               </div>
             </div>
 
+            {/* WhatsApp */}
+            <div className="glass-card rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-3">WhatsApp Business</h3>
+              <StatusToggle label="WhatsApp configured" checked={!!p.whatsapp_configured} onToggle={() => toggleProjectField('whatsapp_configured', !p.whatsapp_configured)} />
+              {p.whatsapp_configured && (
+                <div className="mt-3 space-y-1">
+                  <Label className="text-xs">WhatsApp Number</Label>
+                  <Input defaultValue={p.whatsapp_number || ''} onBlur={e => updateSocialUrl('whatsapp_number', e.target.value)} placeholder="+44 7xxx xxx xxx" />
+                </div>
+              )}
+            </div>
+
             {/* Social Media URLs */}
             <div className="glass-card rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Social Media URLs</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-foreground">Social Media Accounts</h3>
+                <StatusToggle label="All done" checked={!!p.social_accounts_done} onToggle={() => toggleProjectField('social_accounts_done', !p.social_accounts_done)} />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {[
                   { field: 'social_facebook', label: 'Facebook' },
@@ -466,13 +481,34 @@ export default function ProjectDetail() {
                   { field: 'social_tiktok', label: 'TikTok' },
                   { field: 'social_youtube', label: 'YouTube' },
                   { field: 'social_x', label: 'X (Twitter)' },
+                  { field: 'social_linkedin', label: 'LinkedIn' },
                 ].map(s => (
                   <div key={s.field} className="space-y-1">
-                    <Label className="text-xs">{s.label}</Label>
+                    <Label className="text-xs flex items-center gap-1.5">
+                      {p[s.field] ? <CheckCircle2 size={12} className="text-success" /> : <Circle size={12} className="text-muted-foreground" />}
+                      {s.label}
+                    </Label>
                     <Input defaultValue={p[s.field] || ''} onBlur={e => updateSocialUrl(s.field, e.target.value)} placeholder={`${s.label} URL`} />
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* API Keys & Credentials Status */}
+            <div className="glass-card rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-foreground">API Keys & Credentials</h3>
+                <ProjectSettingsModal projectId={project.id} projectName={project.name} trigger={
+                  <Button size="sm" variant="outline" className="gap-1.5 text-xs"><Settings size={14} /> Manage Keys</Button>
+                } />
+              </div>
+              <div className="space-y-0.5">
+                <StatusToggle label="Stripe keys configured" checked={!!p.stripe_configured} onToggle={() => toggleProjectField('stripe_configured', !p.stripe_configured)} />
+                <StatusToggle label="Analytics configured (GA / GTM)" checked={!!p.analytics_configured} onToggle={() => toggleProjectField('analytics_configured', !p.analytics_configured)} />
+                <StatusToggle label="Email API configured" checked={!!p.email_api_configured} onToggle={() => toggleProjectField('email_api_configured', !p.email_api_configured)} />
+                <StatusToggle label="Payment gateway API configured" checked={!!p.payment_gateway_configured} onToggle={() => toggleProjectField('payment_gateway_configured', !p.payment_gateway_configured)} />
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-3">🔒 Sensitive keys are stored encrypted in project settings</p>
             </div>
 
             {/* PWA & Native */}
