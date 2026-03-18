@@ -1,0 +1,1 @@
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS delivery_type text DEFAULT 'saas_only' CHECK (delivery_type IN ('saas_only', 'saas_and_app', 'app_only'));

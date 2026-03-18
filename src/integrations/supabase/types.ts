@@ -1226,6 +1226,7 @@ export type Database = {
           code: string
           created_at: string
           dead_links_checked: boolean | null
+          delivery_type: string | null
           domain_awaiting: boolean | null
           edge_functions_checked: boolean | null
           email_api_configured: boolean | null
@@ -1272,6 +1273,7 @@ export type Database = {
           code: string
           created_at?: string
           dead_links_checked?: boolean | null
+          delivery_type?: string | null
           domain_awaiting?: boolean | null
           edge_functions_checked?: boolean | null
           email_api_configured?: boolean | null
@@ -1318,6 +1320,7 @@ export type Database = {
           code?: string
           created_at?: string
           dead_links_checked?: boolean | null
+          delivery_type?: string | null
           domain_awaiting?: boolean | null
           edge_functions_checked?: boolean | null
           email_api_configured?: boolean | null

@@ -240,6 +240,13 @@ export default function ProjectDetail() {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold tracking-tight text-foreground">{project.name}</h1>
               <StageBadge stage={project.stage} />
+              {p.delivery_type && (
+                <span className={cn("text-[10px] px-2 py-0.5 rounded font-bold uppercase",
+                  p.delivery_type === 'saas_only' ? "bg-info/15 text-info" :
+                  p.delivery_type === 'app_only' ? "bg-warning/15 text-warning" :
+                  "bg-primary/15 text-primary"
+                )}>{p.delivery_type.replace(/_/g, ' ')}</span>
+              )}
               {p.is_live && <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-success/20 text-success uppercase">Live</span>}
             </div>
             <p className="text-sm text-muted-foreground mt-1">{project.short_description}</p>
@@ -327,6 +334,19 @@ export default function ProjectDetail() {
         {/* ===== LAUNCH STATUS ===== */}
         {activeTab === 'Launch Status' && (
           <div className="space-y-4">
+            {/* Delivery Type */}
+            <div className="glass-card rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-3">Delivery Type</h3>
+              <Select value={p.delivery_type || 'saas_only'} onValueChange={v => { supabase.from('projects').update({ delivery_type: v } as any).eq('id', project.id).then(() => queryClient.invalidateQueries({ queryKey: ['project', project.id] })); }}>
+                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="saas_only">SaaS Only</SelectItem>
+                  <SelectItem value="saas_and_app">SaaS & App</SelectItem>
+                  <SelectItem value="app_only">App Only</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Domains */}
             <div className="glass-card rounded-xl p-5">
               <h3 className="text-sm font-semibold text-foreground mb-3">Domain Status</h3>

@@ -76,6 +76,7 @@ export default function Projects() {
           <thead>
             <tr className="border-b border-border/50">
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Project</th>
+              <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Type</th>
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Industry</th>
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Stage</th>
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Readiness</th>
@@ -92,6 +93,13 @@ export default function Projects() {
                       <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{project.name}</div>
                       <div className="text-xs text-muted-foreground mt-0.5">{project.short_description}</div>
                     </Link>
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                      (project as any).delivery_type === 'saas_only' ? 'bg-info/15 text-info' :
+                      (project as any).delivery_type === 'app_only' ? 'bg-warning/15 text-warning' :
+                      (project as any).delivery_type === 'saas_and_app' ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
+                    }`}>{((project as any).delivery_type || 'saas_only').replace(/_/g, ' ')}</span>
                   </td>
                   <td className="px-5 py-3.5"><span className="text-xs text-muted-foreground">{project.industry}</span></td>
                   <td className="px-5 py-3.5"><StageBadge stage={project.stage} /></td>
