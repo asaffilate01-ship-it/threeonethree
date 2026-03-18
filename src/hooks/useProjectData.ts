@@ -30,6 +30,13 @@ export interface ProjectWithRelations extends Project {
   project_integrations: (ProjectIntegration & {
     integrations: Integration | null;
   })[];
+  project_subsidiary_apps?: any[];
+  project_apis?: any[];
+  project_additional_work?: any[];
+  project_compliance?: any[];
+  project_investments?: any[];
+  project_overheads?: any[];
+  project_subscription_tiers?: any[];
 }
 
 export function useProjects() {
@@ -62,7 +69,14 @@ export function useProjectWithRelations(id: string) {
           hosting(*),
           email_services(*),
           costs(*),
-          project_integrations(*, integrations(*))
+          project_integrations(*, integrations(*)),
+          project_subsidiary_apps(*),
+          project_apis(*),
+          project_additional_work(*),
+          project_compliance(*),
+          project_investments(*),
+          project_overheads(*),
+          project_subscription_tiers(*)
         `)
         .eq('id', id)
         .single();

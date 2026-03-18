@@ -132,10 +132,13 @@ export type Database = {
           cost_type: string | null
           end_date: string | null
           id: string
+          is_reimbursed: boolean | null
           monthly_cost_gbp: number | null
           notes: string | null
           one_off_cost_gbp: number | null
+          paid_by: string | null
           project_id: string
+          reimbursed_to: string | null
           start_date: string | null
           vendor: string | null
         }
@@ -145,10 +148,13 @@ export type Database = {
           cost_type?: string | null
           end_date?: string | null
           id?: string
+          is_reimbursed?: boolean | null
           monthly_cost_gbp?: number | null
           notes?: string | null
           one_off_cost_gbp?: number | null
+          paid_by?: string | null
           project_id: string
+          reimbursed_to?: string | null
           start_date?: string | null
           vendor?: string | null
         }
@@ -158,10 +164,13 @@ export type Database = {
           cost_type?: string | null
           end_date?: string | null
           id?: string
+          is_reimbursed?: boolean | null
           monthly_cost_gbp?: number | null
           notes?: string | null
           one_off_cost_gbp?: number | null
+          paid_by?: string | null
           project_id?: string
+          reimbursed_to?: string | null
           start_date?: string | null
           vendor?: string | null
         }
@@ -489,6 +498,131 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      project_additional_work: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          project_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          project_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_additional_work_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_additional_work_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_additional_work_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_apis: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          project_id: string
+          status: string
+          vendor: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          project_id: string
+          status?: string
+          vendor?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          project_id?: string
+          status?: string
+          vendor?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_apis_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_apis_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_apis_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_checklist_items: {
         Row: {
           done_at: string | null
@@ -541,6 +675,61 @@ export type Database = {
             columns: ["template_item_id"]
             isOneToOne: false
             referencedRelation: "checklist_template_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_compliance: {
+        Row: {
+          cost_gbp: number | null
+          created_at: string
+          expiry_date: string | null
+          id: string
+          name: string
+          notes: string | null
+          project_id: string
+          status: string
+        }
+        Insert: {
+          cost_gbp?: number | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          project_id: string
+          status?: string
+        }
+        Update: {
+          cost_gbp?: number | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_compliance_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_compliance_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_compliance_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
             referencedColumns: ["id"]
           },
         ]
@@ -603,6 +792,159 @@ export type Database = {
           },
           {
             foreignKeyName: "project_integrations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_investments: {
+        Row: {
+          amount_gbp: number
+          created_at: string
+          id: string
+          invested_at: string | null
+          investor_name: string
+          notes: string | null
+          project_id: string
+          shares_percent: number | null
+        }
+        Insert: {
+          amount_gbp?: number
+          created_at?: string
+          id?: string
+          invested_at?: string | null
+          investor_name: string
+          notes?: string | null
+          project_id: string
+          shares_percent?: number | null
+        }
+        Update: {
+          amount_gbp?: number
+          created_at?: string
+          id?: string
+          invested_at?: string | null
+          investor_name?: string
+          notes?: string | null
+          project_id?: string
+          shares_percent?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_investments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_investments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_investments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_members: {
+        Row: {
+          access_level: string
+          id: string
+          project_id: string
+          user_id: string
+        }
+        Insert: {
+          access_level?: string
+          id?: string
+          project_id: string
+          user_id: string
+        }
+        Update: {
+          access_level?: string
+          id?: string
+          project_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_overheads: {
+        Row: {
+          amount_gbp: number
+          category: string
+          created_at: string
+          frequency: string
+          id: string
+          name: string
+          notes: string | null
+          project_id: string
+        }
+        Insert: {
+          amount_gbp?: number
+          category: string
+          created_at?: string
+          frequency?: string
+          id?: string
+          name: string
+          notes?: string | null
+          project_id: string
+        }
+        Update: {
+          amount_gbp?: number
+          category?: string
+          created_at?: string
+          frequency?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_overheads_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_overheads_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_overheads_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "v_project_burn"
@@ -717,6 +1059,113 @@ export type Database = {
           },
         ]
       }
+      project_subscription_tiers: {
+        Row: {
+          billing_period: string | null
+          created_at: string
+          features: string | null
+          id: string
+          notes: string | null
+          price_gbp: number | null
+          project_id: string
+          tier_name: string
+        }
+        Insert: {
+          billing_period?: string | null
+          created_at?: string
+          features?: string | null
+          id?: string
+          notes?: string | null
+          price_gbp?: number | null
+          project_id: string
+          tier_name: string
+        }
+        Update: {
+          billing_period?: string | null
+          created_at?: string
+          features?: string | null
+          id?: string
+          notes?: string | null
+          price_gbp?: number | null
+          project_id?: string
+          tier_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_subscription_tiers_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_subscription_tiers_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_subscription_tiers_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_subsidiary_apps: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          notes: string | null
+          project_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          project_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_subsidiary_apps_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_subsidiary_apps_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_subsidiary_apps_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_surfaces: {
         Row: {
           auth_required: boolean
@@ -772,50 +1221,140 @@ export type Database = {
       projects: {
         Row: {
           audience: string | null
+          audit_done: boolean | null
+          broadcasts_done: boolean | null
           code: string
           created_at: string
+          dead_links_checked: boolean | null
+          domain_awaiting: boolean | null
+          edge_functions_checked: boolean | null
+          email_api_configured: boolean | null
+          gdpr_done: boolean | null
+          has_logo: boolean | null
           id: string
           industry: string | null
           is_active: boolean
+          is_live: boolean | null
           launch_target_date: string | null
+          legals_done: boolean | null
+          logo_url: string | null
           name: string
+          native_done: boolean | null
+          native_required: boolean | null
           notes: string | null
+          og_done: boolean | null
           owner: string | null
+          payment_gateway_configured: boolean | null
+          privacy_done: boolean | null
+          push_notifications_done: boolean | null
+          pwa_done: boolean | null
+          pwa_required: boolean | null
           revenue_model: string | null
+          roles_permissions_checked: boolean | null
+          security_checked: boolean | null
+          security_owasp_checked: boolean | null
+          seo_done: boolean | null
           short_description: string | null
+          social_facebook: string | null
+          social_instagram: string | null
+          social_tiktok: string | null
+          social_x: string | null
+          social_youtube: string | null
           stage: Database["public"]["Enums"]["project_stage"]
+          terms_done: boolean | null
+          test_domain: string | null
           updated_at: string
         }
         Insert: {
           audience?: string | null
+          audit_done?: boolean | null
+          broadcasts_done?: boolean | null
           code: string
           created_at?: string
+          dead_links_checked?: boolean | null
+          domain_awaiting?: boolean | null
+          edge_functions_checked?: boolean | null
+          email_api_configured?: boolean | null
+          gdpr_done?: boolean | null
+          has_logo?: boolean | null
           id?: string
           industry?: string | null
           is_active?: boolean
+          is_live?: boolean | null
           launch_target_date?: string | null
+          legals_done?: boolean | null
+          logo_url?: string | null
           name: string
+          native_done?: boolean | null
+          native_required?: boolean | null
           notes?: string | null
+          og_done?: boolean | null
           owner?: string | null
+          payment_gateway_configured?: boolean | null
+          privacy_done?: boolean | null
+          push_notifications_done?: boolean | null
+          pwa_done?: boolean | null
+          pwa_required?: boolean | null
           revenue_model?: string | null
+          roles_permissions_checked?: boolean | null
+          security_checked?: boolean | null
+          security_owasp_checked?: boolean | null
+          seo_done?: boolean | null
           short_description?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_tiktok?: string | null
+          social_x?: string | null
+          social_youtube?: string | null
           stage?: Database["public"]["Enums"]["project_stage"]
+          terms_done?: boolean | null
+          test_domain?: string | null
           updated_at?: string
         }
         Update: {
           audience?: string | null
+          audit_done?: boolean | null
+          broadcasts_done?: boolean | null
           code?: string
           created_at?: string
+          dead_links_checked?: boolean | null
+          domain_awaiting?: boolean | null
+          edge_functions_checked?: boolean | null
+          email_api_configured?: boolean | null
+          gdpr_done?: boolean | null
+          has_logo?: boolean | null
           id?: string
           industry?: string | null
           is_active?: boolean
+          is_live?: boolean | null
           launch_target_date?: string | null
+          legals_done?: boolean | null
+          logo_url?: string | null
           name?: string
+          native_done?: boolean | null
+          native_required?: boolean | null
           notes?: string | null
+          og_done?: boolean | null
           owner?: string | null
+          payment_gateway_configured?: boolean | null
+          privacy_done?: boolean | null
+          push_notifications_done?: boolean | null
+          pwa_done?: boolean | null
+          pwa_required?: boolean | null
           revenue_model?: string | null
+          roles_permissions_checked?: boolean | null
+          security_checked?: boolean | null
+          security_owasp_checked?: boolean | null
+          seo_done?: boolean | null
           short_description?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_tiktok?: string | null
+          social_x?: string | null
+          social_youtube?: string | null
           stage?: Database["public"]["Enums"]["project_stage"]
+          terms_done?: boolean | null
+          test_domain?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -1052,6 +1591,24 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       v_launch_readiness: {
@@ -1075,9 +1632,16 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
+      app_role: "admin" | "project_manager" | "viewer" | "finance" | "partner"
       integration_category:
         | "payments"
         | "email"
@@ -1257,6 +1821,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "project_manager", "viewer", "finance", "partner"],
       integration_category: [
         "payments",
         "email",
