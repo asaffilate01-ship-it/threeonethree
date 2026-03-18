@@ -7,7 +7,7 @@ import ProjectSettingsModal from '@/components/modals/ProjectSettingsModal';
 import AssignChecklistModal from '@/components/modals/AssignChecklistModal';
 import {
   ArrowLeft, ExternalLink, CheckCircle2, Circle, AlertTriangle,
-  Globe, Server, Mail, Shield, Puzzle, Plus, Trash2, Upload
+  Globe, Server, Mail, Shield, Puzzle, Plus, Trash2, Upload, Settings
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
