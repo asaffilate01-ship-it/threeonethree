@@ -1291,6 +1291,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          analytics_configured: boolean | null
           audience: string | null
           audit_done: boolean | null
           broadcasts_done: boolean | null
@@ -1328,17 +1329,23 @@ export type Database = {
           security_owasp_checked: boolean | null
           seo_done: boolean | null
           short_description: string | null
+          social_accounts_done: boolean | null
           social_facebook: string | null
           social_instagram: string | null
+          social_linkedin: string | null
           social_tiktok: string | null
           social_x: string | null
           social_youtube: string | null
           stage: Database["public"]["Enums"]["project_stage"]
+          stripe_configured: boolean | null
           terms_done: boolean | null
           test_domain: string | null
           updated_at: string
+          whatsapp_configured: boolean | null
+          whatsapp_number: string | null
         }
         Insert: {
+          analytics_configured?: boolean | null
           audience?: string | null
           audit_done?: boolean | null
           broadcasts_done?: boolean | null
@@ -1376,17 +1383,23 @@ export type Database = {
           security_owasp_checked?: boolean | null
           seo_done?: boolean | null
           short_description?: string | null
+          social_accounts_done?: boolean | null
           social_facebook?: string | null
           social_instagram?: string | null
+          social_linkedin?: string | null
           social_tiktok?: string | null
           social_x?: string | null
           social_youtube?: string | null
           stage?: Database["public"]["Enums"]["project_stage"]
+          stripe_configured?: boolean | null
           terms_done?: boolean | null
           test_domain?: string | null
           updated_at?: string
+          whatsapp_configured?: boolean | null
+          whatsapp_number?: string | null
         }
         Update: {
+          analytics_configured?: boolean | null
           audience?: string | null
           audit_done?: boolean | null
           broadcasts_done?: boolean | null
@@ -1424,15 +1437,20 @@ export type Database = {
           security_owasp_checked?: boolean | null
           seo_done?: boolean | null
           short_description?: string | null
+          social_accounts_done?: boolean | null
           social_facebook?: string | null
           social_instagram?: string | null
+          social_linkedin?: string | null
           social_tiktok?: string | null
           social_x?: string | null
           social_youtube?: string | null
           stage?: Database["public"]["Enums"]["project_stage"]
+          stripe_configured?: boolean | null
           terms_done?: boolean | null
           test_domain?: string | null
           updated_at?: string
+          whatsapp_configured?: boolean | null
+          whatsapp_number?: string | null
         }
         Relationships: []
       }
