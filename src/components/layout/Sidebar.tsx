@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { path: '/integrations',  label: 'Integrations',  icon: Puzzle },
   { path: '/checklists',    label: 'Checklists',    icon: ClipboardList },
   { path: '/qa',            label: 'QA & Testing',  icon: Bug },
+  { path: '/users',         label: 'Users & Roles', icon: Users },
   { path: '/reports',       label: 'Reports',       icon: BarChart3 },
 ];
 
