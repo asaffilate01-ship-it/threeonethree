@@ -334,6 +334,19 @@ export default function ProjectDetail() {
         {/* ===== LAUNCH STATUS ===== */}
         {activeTab === 'Launch Status' && (
           <div className="space-y-4">
+            {/* Delivery Type */}
+            <div className="glass-card rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-3">Delivery Type</h3>
+              <Select value={p.delivery_type || 'saas_only'} onValueChange={v => { supabase.from('projects').update({ delivery_type: v } as any).eq('id', project.id).then(() => queryClient.invalidateQueries({ queryKey: ['project', project.id] })); }}>
+                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="saas_only">SaaS Only</SelectItem>
+                  <SelectItem value="saas_and_app">SaaS & App</SelectItem>
+                  <SelectItem value="app_only">App Only</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Domains */}
             <div className="glass-card rounded-xl p-5">
               <h3 className="text-sm font-semibold text-foreground mb-3">Domain Status</h3>
