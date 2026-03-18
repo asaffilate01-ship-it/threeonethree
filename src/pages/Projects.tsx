@@ -94,6 +94,13 @@ export default function Projects() {
                       <div className="text-xs text-muted-foreground mt-0.5">{project.short_description}</div>
                     </Link>
                   </td>
+                  <td className="px-5 py-3.5">
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                      (project as any).delivery_type === 'saas_only' ? 'bg-info/15 text-info' :
+                      (project as any).delivery_type === 'app_only' ? 'bg-warning/15 text-warning' :
+                      (project as any).delivery_type === 'saas_and_app' ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
+                    }`}>{((project as any).delivery_type || 'saas_only').replace(/_/g, ' ')}</span>
+                  </td>
                   <td className="px-5 py-3.5"><span className="text-xs text-muted-foreground">{project.industry}</span></td>
                   <td className="px-5 py-3.5"><StageBadge stage={project.stage} /></td>
                   <td className="px-5 py-3.5"><ReadinessBar percent={r.percent} /></td>
