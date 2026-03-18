@@ -192,7 +192,8 @@ export default function ProjectDetail() {
     const { error } = await supabase.from('project_subscription_tiers' as any).insert({
       project_id: project.id, tier_name: data.tier_name,
       price_gbp: data.price_gbp ? Number(data.price_gbp) : null,
-      billing_period: data.billing_period || 'monthly', features: data.features, notes: data.notes
+      billing_period: data.billing_period || 'monthly', features: data.features, notes: data.notes,
+      country_name: data.country_name || null, currency: data.currency || 'GBP'
     });
     if (error) { toast.error('Failed to add'); return; }
     queryClient.invalidateQueries({ queryKey: ['project', project.id] });
@@ -244,6 +245,7 @@ export default function ProjectDetail() {
                 <span className={cn("text-[10px] px-2 py-0.5 rounded font-bold uppercase",
                   p.delivery_type === 'saas_only' ? "bg-info/15 text-info" :
                   p.delivery_type === 'app_only' ? "bg-warning/15 text-warning" :
+                  p.delivery_type === 'app_with_landing' ? "bg-accent/15 text-accent-foreground" :
                   "bg-primary/15 text-primary"
                 )}>{p.delivery_type.replace(/_/g, ' ')}</span>
               )}
@@ -338,13 +340,60 @@ export default function ProjectDetail() {
             <div className="glass-card rounded-xl p-5">
               <h3 className="text-sm font-semibold text-foreground mb-3">Delivery Type</h3>
               <Select value={p.delivery_type || 'saas_only'} onValueChange={v => { supabase.from('projects').update({ delivery_type: v } as any).eq('id', project.id).then(() => queryClient.invalidateQueries({ queryKey: ['project', project.id] })); }}>
-                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="saas_only">SaaS Only</SelectItem>
                   <SelectItem value="saas_and_app">SaaS & App</SelectItem>
                   <SelectItem value="app_only">App Only</SelectItem>
+                  <SelectItem value="app_with_landing">App with Landing Page</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Multi-country */}
+            <div className="glass-card rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">Multi-Country</h3>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Checkbox checked={!!p.is_multi_country} onCheckedChange={v => toggleProjectField('is_multi_country', !!v)} />
+                    <Label className="text-xs">This project operates in multiple countries</Label>
+                  </div>
+                </div>
+                {p.is_multi_country && (
+                  <AddItemModal title="Add Country" fields={[
+                    { key: 'country_name', label: 'Country Name' },
+                    { key: 'country_code', label: 'Country Code (e.g. GB, US, AE)' },
+                    { key: 'currency', label: 'Currency (e.g. GBP, USD, AED)' },
+                    { key: 'notes', label: 'Notes', type: 'textarea' },
+                  ]} onSave={async (data) => {
+                    const { error } = await supabase.from('project_countries' as any).insert({
+                      project_id: project.id, country_name: data.country_name,
+                      country_code: (data.country_code || '').toUpperCase(), currency: (data.currency || 'GBP').toUpperCase(), notes: data.notes
+                    });
+                    if (error) { toast.error(error.message); return; }
+                    queryClient.invalidateQueries({ queryKey: ['project', project.id] });
+                    toast.success('Country added');
+                  }} />
+                )}
+              </div>
+              {p.is_multi_country && (p.project_countries || []).length > 0 && (
+                <div className="space-y-2 mt-3">
+                  {(p.project_countries || []).map((c: any) => (
+                    <div key={c.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/20 border border-border/30">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-foreground bg-muted px-1.5 py-0.5 rounded">{c.country_code}</span>
+                        <span className="text-sm text-foreground">{c.country_name}</span>
+                        <span className="text-xs text-muted-foreground">{c.currency}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {c.notes && <span className="text-xs text-muted-foreground">{c.notes}</span>}
+                        <button onClick={() => deleteItem('project_countries', c.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={12} /></button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Domains */}
@@ -805,27 +854,45 @@ export default function ProjectDetail() {
                 <h3 className="text-sm font-semibold text-foreground">Subscription Tiers</h3>
                 <AddItemModal title="Add Subscription Tier" fields={[
                   { key: 'tier_name', label: 'Tier Name' },
-                  { key: 'price_gbp', label: 'Price £', type: 'number' },
+                  { key: 'country_name', label: 'Country (e.g. UK, UAE, USA)' },
+                  { key: 'currency', label: 'Currency (e.g. GBP, AED, USD)' },
+                  { key: 'price_gbp', label: 'Price (in currency)', type: 'number' },
                   { key: 'billing_period', label: 'Billing Period (monthly, annual)' },
                   { key: 'features', label: 'Features', type: 'textarea' },
                   { key: 'notes', label: 'Notes', type: 'textarea' },
                 ]} onSave={addSubscriptionTier} />
               </div>
-              <div className="space-y-2">
-                {(p.project_subscription_tiers || []).map((tier: any) => (
-                  <div key={tier.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/20 border border-border/30">
-                    <div>
-                      <div className="text-sm font-medium text-foreground">{tier.tier_name}</div>
-                      <div className="text-xs text-muted-foreground">{tier.features}</div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-foreground">£{Number(tier.price_gbp || 0)}/{tier.billing_period}</span>
-                      <button onClick={() => deleteItem('project_subscription_tiers', tier.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={12} /></button>
+              {/* Group tiers by country */}
+              {(() => {
+                const tiers = p.project_subscription_tiers || [];
+                const grouped: Record<string, any[]> = {};
+                tiers.forEach((t: any) => {
+                  const key = t.country_name || 'Global';
+                  if (!grouped[key]) grouped[key] = [];
+                  grouped[key].push(t);
+                });
+                return Object.entries(grouped).map(([country, countryTiers]) => (
+                  <div key={country} className="mb-4">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{country}</h4>
+                    <div className="space-y-1.5">
+                      {countryTiers.map((tier: any) => (
+                        <div key={tier.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/20 border border-border/30">
+                          <div>
+                            <div className="text-sm font-medium text-foreground">{tier.tier_name}</div>
+                            <div className="text-xs text-muted-foreground">{tier.features}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-muted-foreground">{tier.currency || 'GBP'}</span>
+                            <span className="text-sm font-medium text-foreground">{Number(tier.price_gbp || 0).toLocaleString()}/{tier.billing_period}</span>
+                            <button onClick={() => deleteItem('project_subscription_tiers', tier.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={12} /></button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
-                {(p.project_subscription_tiers || []).length === 0 && <div className="text-sm text-muted-foreground text-center py-4">No subscription tiers</div>}
-              </div>
+                ));
+              })()}
+              {(p.project_subscription_tiers || []).length === 0 && <div className="text-sm text-muted-foreground text-center py-4">No subscription tiers</div>}
             </div>
           </div>
         )}

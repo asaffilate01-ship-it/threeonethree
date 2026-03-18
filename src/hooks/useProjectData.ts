@@ -76,7 +76,8 @@ export function useProjectWithRelations(id: string) {
           project_compliance(*),
           project_investments(*),
           project_overheads(*),
-          project_subscription_tiers(*)
+          project_subscription_tiers(*),
+          project_countries(*)
         `)
         .eq('id', id)
         .single();
