@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, FolderKanban, ListTodo, PoundSterling,
-  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut, Bug
+  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut, Bug, Users
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
