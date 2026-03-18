@@ -192,7 +192,8 @@ export default function ProjectDetail() {
     const { error } = await supabase.from('project_subscription_tiers' as any).insert({
       project_id: project.id, tier_name: data.tier_name,
       price_gbp: data.price_gbp ? Number(data.price_gbp) : null,
-      billing_period: data.billing_period || 'monthly', features: data.features, notes: data.notes
+      billing_period: data.billing_period || 'monthly', features: data.features, notes: data.notes,
+      country_name: data.country_name || null, currency: data.currency || 'GBP'
     });
     if (error) { toast.error('Failed to add'); return; }
     queryClient.invalidateQueries({ queryKey: ['project', project.id] });
