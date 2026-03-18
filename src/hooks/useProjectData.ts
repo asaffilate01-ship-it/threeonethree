@@ -69,7 +69,14 @@ export function useProjectWithRelations(id: string) {
           hosting(*),
           email_services(*),
           costs(*),
-          project_integrations(*, integrations(*))
+          project_integrations(*, integrations(*)),
+          project_subsidiary_apps(*),
+          project_apis(*),
+          project_additional_work(*),
+          project_compliance(*),
+          project_investments(*),
+          project_overheads(*),
+          project_subscription_tiers(*)
         `)
         .eq('id', id)
         .single();
