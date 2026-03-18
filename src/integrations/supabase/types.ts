@@ -734,6 +734,61 @@ export type Database = {
           },
         ]
       }
+      project_countries: {
+        Row: {
+          country_code: string
+          country_name: string
+          created_at: string
+          currency: string
+          id: string
+          is_primary: boolean | null
+          notes: string | null
+          project_id: string
+        }
+        Insert: {
+          country_code: string
+          country_name: string
+          created_at?: string
+          currency?: string
+          id?: string
+          is_primary?: boolean | null
+          notes?: string | null
+          project_id: string
+        }
+        Update: {
+          country_code?: string
+          country_name?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          is_primary?: boolean | null
+          notes?: string | null
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_countries_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_countries_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_countries_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_integrations: {
         Row: {
           annual_cost_gbp: number | null
@@ -1062,7 +1117,10 @@ export type Database = {
       project_subscription_tiers: {
         Row: {
           billing_period: string | null
+          country_id: string | null
+          country_name: string | null
           created_at: string
+          currency: string | null
           features: string | null
           id: string
           notes: string | null
@@ -1072,7 +1130,10 @@ export type Database = {
         }
         Insert: {
           billing_period?: string | null
+          country_id?: string | null
+          country_name?: string | null
           created_at?: string
+          currency?: string | null
           features?: string | null
           id?: string
           notes?: string | null
@@ -1082,7 +1143,10 @@ export type Database = {
         }
         Update: {
           billing_period?: string | null
+          country_id?: string | null
+          country_name?: string | null
           created_at?: string
+          currency?: string | null
           features?: string | null
           id?: string
           notes?: string | null
@@ -1091,6 +1155,13 @@ export type Database = {
           tier_name?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "project_subscription_tiers_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "project_countries"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "project_subscription_tiers_project_id_fkey"
             columns: ["project_id"]
@@ -1236,6 +1307,7 @@ export type Database = {
           industry: string | null
           is_active: boolean
           is_live: boolean | null
+          is_multi_country: boolean | null
           launch_target_date: string | null
           legals_done: boolean | null
           logo_url: string | null
@@ -1283,6 +1355,7 @@ export type Database = {
           industry?: string | null
           is_active?: boolean
           is_live?: boolean | null
+          is_multi_country?: boolean | null
           launch_target_date?: string | null
           legals_done?: boolean | null
           logo_url?: string | null
@@ -1330,6 +1403,7 @@ export type Database = {
           industry?: string | null
           is_active?: boolean
           is_live?: boolean | null
+          is_multi_country?: boolean | null
           launch_target_date?: string | null
           legals_done?: boolean | null
           logo_url?: string | null
