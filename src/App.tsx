@@ -15,6 +15,7 @@ import Integrations from "@/pages/Integrations";
 import Checklists from "@/pages/Checklists";
 import Reports from "@/pages/Reports";
 import QaDashboard from "@/pages/QaDashboard";
+import UserManagement from "@/pages/UserManagement";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
 
