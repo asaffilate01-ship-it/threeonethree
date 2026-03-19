@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useProjects, useTasks, useLaunchReadiness, useProjectBurn, useDomains } from '@/hooks/useProjectData';
 import KpiCard from '@/components/cards/KpiCard';
+import LiveIssueFeed from '@/components/feeds/LiveIssueFeed';
 import StageBadge from '@/components/badges/StageBadge';
 import ReadinessBar from '@/components/badges/ReadinessBar';
 import { Link } from 'react-router-dom';
@@ -83,6 +84,15 @@ export default function Dashboard() {
             </div>
           ))}
         </div>
+      </motion.div>
+
+      {/* Live Issue Feed */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="glass-card rounded-xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-foreground">Live Issues Feed</h2>
+          <Link to="/qa" className="text-xs text-primary hover:underline flex items-center gap-1">QA Dashboard <ArrowRight size={12} /></Link>
+        </div>
+        <LiveIssueFeed />
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
