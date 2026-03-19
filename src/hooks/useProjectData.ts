@@ -53,6 +53,39 @@ export function useProjects() {
   });
 }
 
+export function useMyProjectMemberships() {
+  return useQuery({
+    queryKey: ['my-project-memberships'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('project_members')
+        .select('project_id, access_level')
+        .eq('user_id', user.id);
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useMyProfile() {
+  return useQuery({
+    queryKey: ['my-profile'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 export function useProjectWithRelations(id: string) {
   return useQuery({
     queryKey: ['project', id],
