@@ -6,9 +6,9 @@ export default function AppShell() {
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
-      <div className="pl-60 transition-all duration-300">
+      <div className="pl-60 transition-all duration-300 h-screen flex flex-col">
         <Topbar />
-        <main className="p-6 glow-top min-h-[calc(100vh-3.5rem)]">
+        <main className="p-6 glow-top flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>
