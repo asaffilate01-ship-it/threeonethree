@@ -89,6 +89,13 @@ export default function ProjectDetail() {
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('Summary');
   const queryClient = useQueryClient();
 
+  // Track last opened
+  useEffect(() => {
+    if (id) {
+      supabase.from('projects').update({ last_opened_at: new Date().toISOString() } as any).eq('id', id).then();
+    }
+  }, [id]);
+
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh] text-sm text-muted-foreground">Loading…</div>;
   if (!project) return (
     <div className="flex items-center justify-center min-h-[60vh]">
