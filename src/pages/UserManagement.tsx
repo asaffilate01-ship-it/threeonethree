@@ -91,6 +91,72 @@ export default function UserManagement() {
   const [editUserId, setEditUserId] = useState<string | null>(null);
   const [editRoleOpen, setEditRoleOpen] = useState(false);
   const [editProjectOpen, setEditProjectOpen] = useState(false);
+  const [editUserOpen, setEditUserOpen] = useState(false);
+  const [editUserRoles, setEditUserRoles] = useState<string[]>([]);
+  const [editUserAccess, setEditUserAccess] = useState<Record<string, string>>({});
+  const [editUserLoading, setEditUserLoading] = useState(false);
+
+  const openEditUser = (userId: string) => {
+    setEditUserId(userId);
+    const currentRoles = getRolesForUser(userId).map((r: any) => r.role);
+    setEditUserRoles(currentRoles);
+    const currentAccess: Record<string, string> = {};
+    getMembershipsForUser(userId).forEach((m: any) => { currentAccess[m.project_id] = m.access_level; });
+    setEditUserAccess(currentAccess);
+    setEditUserOpen(true);
+  };
+
+  const handleSaveUser = async () => {
+    if (!editUserId) return;
+    setEditUserLoading(true);
+
+    const existingRoles = getRolesForUser(editUserId);
+    const existingRoleNames = existingRoles.map((r: any) => r.role);
+    
+    // Remove roles that were unchecked
+    const rolesToRemove = existingRoles.filter((r: any) => !editUserRoles.includes(r.role));
+    for (const r of rolesToRemove) {
+      await supabase.from('user_roles' as any).delete().eq('id', r.id);
+    }
+    // Add new roles
+    const rolesToAdd = editUserRoles.filter(r => !existingRoleNames.includes(r));
+    if (rolesToAdd.length > 0) {
+      await supabase.from('user_roles' as any).insert(rolesToAdd.map(role => ({ user_id: editUserId, role })));
+    }
+
+    const existingMembers = getMembershipsForUser(editUserId);
+    const existingProjectIds = existingMembers.map((m: any) => m.project_id);
+    
+    // Remove projects set to 'none' or removed
+    const membersToRemove = existingMembers.filter((m: any) => !editUserAccess[m.project_id] || editUserAccess[m.project_id] === 'none');
+    for (const m of membersToRemove) {
+      await supabase.from('project_members' as any).delete().eq('id', m.id);
+    }
+    // Update existing project access levels
+    for (const m of existingMembers) {
+      const newLevel = editUserAccess[m.project_id];
+      if (newLevel && newLevel !== 'none' && newLevel !== m.access_level) {
+        await supabase.from('project_members' as any).update({ access_level: newLevel }).eq('id', m.id);
+      }
+    }
+    // Add new project assignments
+    const newProjects = Object.entries(editUserAccess)
+      .filter(([pid, level]) => level !== 'none' && !existingProjectIds.includes(pid));
+    if (newProjects.length > 0) {
+      await supabase.from('project_members' as any).insert(
+        newProjects.map(([project_id, access_level]) => ({ user_id: editUserId, project_id, access_level }))
+      );
+    }
+
+    toast.success('User updated');
+    queryClient.invalidateQueries({ queryKey: ['user-roles'] });
+    queryClient.invalidateQueries({ queryKey: ['project-members'] });
+    setEditUserOpen(false);
+    setEditUserLoading(false);
+  };
+
+  const getRolesForUser = (userId: string) => (roles || []).filter((r: any) => r.user_id === userId);
+  const getMembershipsForUser = (userId: string) => (members || []).filter((m: any) => m.user_id === userId);
 
   const resetWizard = () => {
     setWizardStep('details');
