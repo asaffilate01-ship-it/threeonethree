@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { useProjectWithRelations, useToggleChecklistItem } from '@/hooks/useProjectData';
 import StageBadge from '@/components/badges/StageBadge';
 import ReadinessBar from '@/components/badges/ReadinessBar';
@@ -87,6 +88,13 @@ export default function ProjectDetail() {
   const toggleChecklist = useToggleChecklistItem();
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('Summary');
   const queryClient = useQueryClient();
+
+  // Track last opened
+  useEffect(() => {
+    if (id) {
+      supabase.from('projects').update({ last_opened_at: new Date().toISOString() } as any).eq('id', id).then();
+    }
+  }, [id]);
 
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh] text-sm text-muted-foreground">Loading…</div>;
   if (!project) return (

@@ -6,7 +6,8 @@ import StageBadge from '@/components/badges/StageBadge';
 import ReadinessBar from '@/components/badges/ReadinessBar';
 import CreateProjectModal from '@/components/modals/CreateProjectModal';
 import EditProjectModal from '@/components/modals/EditProjectModal';
-import { Search, Filter, Pencil, Trash2, MoreHorizontal, Users } from 'lucide-react';
+import { Search, Filter, Pencil, Trash2, MoreHorizontal, Users, Clock } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -156,6 +157,7 @@ export default function Projects() {
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Industry</th>
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Stage</th>
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Readiness</th>
+              <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Last Opened</th>
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Access</th>
               <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Actions</th>
             </tr>
@@ -192,6 +194,16 @@ export default function Projects() {
                   <td className="px-5 py-3.5"><StageBadge stage={project.stage} /></td>
                   <td className="px-5 py-3.5"><ReadinessBar percent={r.percent} /></td>
                   <td className="px-5 py-3.5">
+                    {(project as any).last_opened_at ? (
+                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                        <Clock size={10} />
+                        {formatDistanceToNow(new Date((project as any).last_opened_at), { addSuffix: true })}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground/50">Never</span>
+                    )}
+                  </td>
+                  <td className="px-5 py-3.5">
                     <span className={cn("text-xs capitalize",
                       shared ? 'text-info' : 'text-muted-foreground'
                     )}>
@@ -219,7 +231,7 @@ export default function Projects() {
               );
             })}
             {filtered.length === 0 && (
-              <tr><td colSpan={7} className="text-center py-12 text-sm text-muted-foreground">No projects found</td></tr>
+              <tr><td colSpan={8} className="text-center py-12 text-sm text-muted-foreground">No projects found</td></tr>
             )}
           </tbody>
         </table>

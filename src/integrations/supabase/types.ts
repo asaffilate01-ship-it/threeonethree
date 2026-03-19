@@ -1316,6 +1316,7 @@ export type Database = {
           is_active: boolean
           is_live: boolean | null
           is_multi_country: boolean | null
+          last_opened_at: string | null
           launch_target_date: string | null
           legals_done: boolean | null
           logo_url: string | null
@@ -1370,6 +1371,7 @@ export type Database = {
           is_active?: boolean
           is_live?: boolean | null
           is_multi_country?: boolean | null
+          last_opened_at?: string | null
           launch_target_date?: string | null
           legals_done?: boolean | null
           logo_url?: string | null
@@ -1424,6 +1426,7 @@ export type Database = {
           is_active?: boolean
           is_live?: boolean | null
           is_multi_country?: boolean | null
+          last_opened_at?: string | null
           launch_target_date?: string | null
           legals_done?: boolean | null
           logo_url?: string | null
