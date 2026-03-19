@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Plus, Trash2, Shield, UserPlus, ChevronRight, Check, Pencil, Eye, EyeOff, Crown } from 'lucide-react';
@@ -91,6 +90,72 @@ export default function UserManagement() {
   const [editUserId, setEditUserId] = useState<string | null>(null);
   const [editRoleOpen, setEditRoleOpen] = useState(false);
   const [editProjectOpen, setEditProjectOpen] = useState(false);
+  const [editUserOpen, setEditUserOpen] = useState(false);
+  const [editUserRoles, setEditUserRoles] = useState<string[]>([]);
+  const [editUserAccess, setEditUserAccess] = useState<Record<string, string>>({});
+  const [editUserLoading, setEditUserLoading] = useState(false);
+
+  const openEditUser = (userId: string) => {
+    setEditUserId(userId);
+    const currentRoles = getRolesForUser(userId).map((r: any) => r.role);
+    setEditUserRoles(currentRoles);
+    const currentAccess: Record<string, string> = {};
+    getMembershipsForUser(userId).forEach((m: any) => { currentAccess[m.project_id] = m.access_level; });
+    setEditUserAccess(currentAccess);
+    setEditUserOpen(true);
+  };
+
+  const handleSaveUser = async () => {
+    if (!editUserId) return;
+    setEditUserLoading(true);
+
+    const existingRoles = getRolesForUser(editUserId);
+    const existingRoleNames = existingRoles.map((r: any) => r.role);
+    
+    // Remove roles that were unchecked
+    const rolesToRemove = existingRoles.filter((r: any) => !editUserRoles.includes(r.role));
+    for (const r of rolesToRemove) {
+      await supabase.from('user_roles' as any).delete().eq('id', r.id);
+    }
+    // Add new roles
+    const rolesToAdd = editUserRoles.filter(r => !existingRoleNames.includes(r));
+    if (rolesToAdd.length > 0) {
+      await supabase.from('user_roles' as any).insert(rolesToAdd.map(role => ({ user_id: editUserId, role })));
+    }
+
+    const existingMembers = getMembershipsForUser(editUserId);
+    const existingProjectIds = existingMembers.map((m: any) => m.project_id);
+    
+    // Remove projects set to 'none' or removed
+    const membersToRemove = existingMembers.filter((m: any) => !editUserAccess[m.project_id] || editUserAccess[m.project_id] === 'none');
+    for (const m of membersToRemove) {
+      await supabase.from('project_members' as any).delete().eq('id', m.id);
+    }
+    // Update existing project access levels
+    for (const m of existingMembers) {
+      const newLevel = editUserAccess[m.project_id];
+      if (newLevel && newLevel !== 'none' && newLevel !== m.access_level) {
+        await supabase.from('project_members' as any).update({ access_level: newLevel }).eq('id', m.id);
+      }
+    }
+    // Add new project assignments
+    const newProjects = Object.entries(editUserAccess)
+      .filter(([pid, level]) => level !== 'none' && !existingProjectIds.includes(pid));
+    if (newProjects.length > 0) {
+      await supabase.from('project_members' as any).insert(
+        newProjects.map(([project_id, access_level]) => ({ user_id: editUserId, project_id, access_level }))
+      );
+    }
+
+    toast.success('User updated');
+    queryClient.invalidateQueries({ queryKey: ['user-roles'] });
+    queryClient.invalidateQueries({ queryKey: ['project-members'] });
+    setEditUserOpen(false);
+    setEditUserLoading(false);
+  };
+
+  const getRolesForUser = (userId: string) => (roles || []).filter((r: any) => r.user_id === userId);
+  const getMembershipsForUser = (userId: string) => (members || []).filter((m: any) => m.user_id === userId);
 
   const resetWizard = () => {
     setWizardStep('details');
@@ -201,8 +266,6 @@ export default function UserManagement() {
 
   if (loadingProfiles) return <div className="flex items-center justify-center min-h-[60vh] text-sm text-muted-foreground">Loading…</div>;
 
-  const getRolesForUser = (userId: string) => (roles || []).filter((r: any) => r.user_id === userId);
-  const getMembershipsForUser = (userId: string) => (members || []).filter((m: any) => m.user_id === userId);
   const assignedProjectIds = (userId: string) => getMembershipsForUser(userId).map((m: any) => m.project_id);
 
   const STEPS: { key: WizardStep; label: string }[] = [
@@ -241,41 +304,27 @@ export default function UserManagement() {
                     {userRoles.map((r: any) => (
                       <span key={r.id} className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium capitalize">
                         {r.role.replace('_', ' ')}
-                        <button onClick={() => removeRole(r.id)} className="hover:text-destructive"><Trash2 size={10} /></button>
                       </span>
                     ))}
                   </div>
-                  <Button size="sm" variant="ghost" className="h-6 px-1.5 text-[10px]" onClick={() => { setEditUserId(profile.id); setEditRoleOpen(true); }}>
-                    <Plus size={10} /> Role
-                  </Button>
-                  <Button size="sm" variant="ghost" className="h-6 px-1.5 text-[10px]" onClick={() => { setEditUserId(profile.id); setEditProjectOpen(true); }}>
-                    <Plus size={10} /> Project
+                  <Button size="sm" variant="outline" className="h-6 px-2 text-[10px] gap-1" onClick={() => openEditUser(profile.id)}>
+                    <Pencil size={10} /> Edit
                   </Button>
                 </div>
               </div>
               {userProjects.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-border/30 space-y-1.5">
                   <div className="text-xs font-medium text-muted-foreground">Project Access</div>
-                  {userProjects.map((m: any) => (
-                    <div key={m.id} className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-muted/20">
-                      <span className="text-xs text-foreground font-medium">[{m.projects?.code}] {m.projects?.name}</span>
-                      <div className="flex items-center gap-2">
-                        <Select value={m.access_level} onValueChange={v => updateMemberAccess(m.id, v)}>
-                          <SelectTrigger className="h-6 text-[10px] w-20 border-none bg-transparent">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ACCESS_LEVELS.filter(a => a.value !== 'none').map(a => (
-                              <SelectItem key={a.value} value={a.value}>
-                                <span className={cn("text-xs", a.color)}>{a.label}</span>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <button onClick={() => removeMember(m.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={10} /></button>
-                      </div>
-                    </div>
-                  ))}
+                  <div className="flex gap-1.5 flex-wrap">
+                    {userProjects.map((m: any) => {
+                      const accessDef = ACCESS_LEVELS.find(a => a.value === m.access_level);
+                      return (
+                        <span key={m.id} className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-muted/30 text-foreground font-medium">
+                          {m.projects?.code} <span className={cn("capitalize", accessDef?.color)}>({accessDef?.label})</span>
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
@@ -449,50 +498,87 @@ export default function UserManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* ===== ADD ROLE TO EXISTING USER ===== */}
-      <Dialog open={editRoleOpen} onOpenChange={setEditRoleOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader><DialogTitle>Add Role</DialogTitle></DialogHeader>
-          <div className="space-y-2">
-            {ROLES.filter(r => !getRolesForUser(editUserId || '').some((ur: any) => ur.role === r)).map(role => (
-              <button key={role} onClick={() => editUserId && addRoleToExistingUser(editUserId, role)}
-                className="flex items-center gap-3 w-full p-3 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors text-left">
-                <Shield size={14} className="text-primary" />
-                <div>
-                  <div className="text-sm font-medium text-foreground capitalize">{role.replace('_', ' ')}</div>
-                  <div className="text-xs text-muted-foreground">{ROLE_DESCRIPTIONS[role]}</div>
+      {/* ===== EDIT USER DIALOG ===== */}
+      <Dialog open={editUserOpen} onOpenChange={setEditUserOpen}>
+        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+          </DialogHeader>
+          {editUserId && (() => {
+            const profile = (profiles || []).find((p: any) => p.id === editUserId);
+            return (
+              <div className="space-y-5">
+                <div className="glass-card rounded-lg p-3">
+                  <div className="text-sm font-semibold text-foreground">{profile?.display_name}</div>
+                  <div className="text-xs text-muted-foreground">{profile?.email}</div>
                 </div>
-              </button>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* ===== ADD PROJECT TO EXISTING USER ===== */}
-      <Dialog open={editProjectOpen} onOpenChange={setEditProjectOpen}>
-        <DialogContent className="sm:max-w-md max-h-[70vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Assign Project</DialogTitle></DialogHeader>
-          <div className="space-y-2">
-            {(projects || []).filter(p => !assignedProjectIds(editUserId || '').includes(p.id)).map(proj => (
-              <div key={proj.id} className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-border/30">
-                <div>
-                  <span className="text-xs font-bold text-muted-foreground mr-1.5">{proj.code}</span>
-                  <span className="text-sm text-foreground">{proj.name}</span>
-                </div>
-                <div className="flex gap-1">
-                  {ACCESS_LEVELS.filter(a => a.value !== 'none').map(a => {
-                    const Icon = a.icon;
-                    return (
-                      <button key={a.value} onClick={() => editUserId && addProjectToExistingUser(editUserId, proj.id, a.value)}
-                        className={cn("flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium transition-colors text-muted-foreground hover:text-foreground", a.color)}>
-                        <Icon size={10} /> {a.label}
+                {/* Roles */}
+                <div className="space-y-2">
+                  <div className="text-xs font-medium text-muted-foreground">Roles</div>
+                  <div className="space-y-1.5">
+                    {ROLES.map(role => (
+                      <button key={role} onClick={() => setEditUserRoles(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role])}
+                        className={cn(
+                          "flex items-center gap-3 w-full p-2.5 rounded-lg border transition-colors text-left",
+                          editUserRoles.includes(role) ? "border-primary bg-primary/5" : "border-border/50 hover:bg-muted/30"
+                        )}>
+                        <Checkbox checked={editUserRoles.includes(role)} className="pointer-events-none" />
+                        <div>
+                          <div className="text-sm font-medium text-foreground capitalize">{role.replace('_', ' ')}</div>
+                          <div className="text-xs text-muted-foreground">{ROLE_DESCRIPTIONS[role]}</div>
+                        </div>
                       </button>
-                    );
-                  })}
+                    ))}
+                  </div>
+                </div>
+
+                {/* Project Access */}
+                <div className="space-y-2">
+                  <div className="text-xs font-medium text-muted-foreground">Project Access</div>
+                  <div className="space-y-1.5 max-h-[35vh] overflow-y-auto pr-1">
+                    {(projects || []).map(proj => {
+                      const current = editUserAccess[proj.id] || 'none';
+                      return (
+                        <div key={proj.id} className="flex items-center justify-between py-2 px-3 rounded-lg border border-border/30 bg-muted/10">
+                          <div>
+                            <span className="text-xs font-bold text-muted-foreground mr-1.5">{proj.code}</span>
+                            <span className="text-sm text-foreground">{proj.name}</span>
+                          </div>
+                          <div className="flex gap-1">
+                            {ACCESS_LEVELS.map(a => {
+                              const Icon = a.icon;
+                              return (
+                                <button key={a.value} onClick={() => setEditUserAccess(prev => {
+                                  const next = { ...prev };
+                                  if (a.value === 'none') delete next[proj.id];
+                                  else next[proj.id] = a.value;
+                                  return next;
+                                })}
+                                  className={cn(
+                                    "flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium transition-colors",
+                                    current === a.value ? `${a.color} bg-foreground/5 ring-1 ring-current/30` : "text-muted-foreground hover:text-foreground"
+                                  )}>
+                                  <Icon size={10} /> {a.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setEditUserOpen(false)}>Cancel</Button>
+                  <Button onClick={handleSaveUser} disabled={editUserLoading}>
+                    {editUserLoading ? 'Saving…' : 'Save Changes'}
+                  </Button>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </div>
