@@ -305,15 +305,11 @@ export default function UserManagement() {
                     {userRoles.map((r: any) => (
                       <span key={r.id} className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium capitalize">
                         {r.role.replace('_', ' ')}
-                        <button onClick={() => removeRole(r.id)} className="hover:text-destructive"><Trash2 size={10} /></button>
                       </span>
                     ))}
                   </div>
-                  <Button size="sm" variant="ghost" className="h-6 px-1.5 text-[10px]" onClick={() => { setEditUserId(profile.id); setEditRoleOpen(true); }}>
-                    <Plus size={10} /> Role
-                  </Button>
-                  <Button size="sm" variant="ghost" className="h-6 px-1.5 text-[10px]" onClick={() => { setEditUserId(profile.id); setEditProjectOpen(true); }}>
-                    <Plus size={10} /> Project
+                  <Button size="sm" variant="outline" className="h-6 px-2 text-[10px] gap-1" onClick={() => openEditUser(profile.id)}>
+                    <Pencil size={10} /> Edit
                   </Button>
                 </div>
               </div>
