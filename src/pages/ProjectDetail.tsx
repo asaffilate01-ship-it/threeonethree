@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { useProjectWithRelations, useToggleChecklistItem } from '@/hooks/useProjectData';
 import StageBadge from '@/components/badges/StageBadge';
 import ReadinessBar from '@/components/badges/ReadinessBar';
