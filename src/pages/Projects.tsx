@@ -194,6 +194,16 @@ export default function Projects() {
                   <td className="px-5 py-3.5"><StageBadge stage={project.stage} /></td>
                   <td className="px-5 py-3.5"><ReadinessBar percent={r.percent} /></td>
                   <td className="px-5 py-3.5">
+                    {(project as any).last_opened_at ? (
+                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                        <Clock size={10} />
+                        {formatDistanceToNow(new Date((project as any).last_opened_at), { addSuffix: true })}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground/50">Never</span>
+                    )}
+                  </td>
+                  <td className="px-5 py-3.5">
                     <span className={cn("text-xs capitalize",
                       shared ? 'text-info' : 'text-muted-foreground'
                     )}>
