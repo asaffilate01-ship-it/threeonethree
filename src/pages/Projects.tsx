@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useProjects, useLaunchReadiness } from '@/hooks/useProjectData';
+import { useProjects, useLaunchReadiness, useMyProjectMemberships, useMyProfile } from '@/hooks/useProjectData';
 import StageBadge from '@/components/badges/StageBadge';
 import ReadinessBar from '@/components/badges/ReadinessBar';
 import CreateProjectModal from '@/components/modals/CreateProjectModal';
 import EditProjectModal from '@/components/modals/EditProjectModal';
-import { Search, Filter, Pencil, Trash2, MoreHorizontal } from 'lucide-react';
+import { Search, Filter, Pencil, Trash2, MoreHorizontal, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -22,6 +22,7 @@ import {
 import type { Database } from '@/integrations/supabase/types';
 
 type ProjectStage = Database['public']['Enums']['project_stage'];
+type OwnershipFilter = 'all' | 'mine' | 'shared';
 
 const STAGE_FILTERS: { label: string; value: ProjectStage | 'all' }[] = [
   { label: 'All', value: 'all' },
@@ -36,12 +37,18 @@ const STAGE_FILTERS: { label: string; value: ProjectStage | 'all' }[] = [
 export default function Projects() {
   const { data: projects, isLoading } = useProjects();
   const { data: readiness } = useLaunchReadiness();
+  const { data: memberships } = useMyProjectMemberships();
+  const { data: profile } = useMyProfile();
   const [search, setSearch] = useState('');
   const [stageFilter, setStageFilter] = useState<ProjectStage | 'all'>('all');
+  const [ownershipFilter, setOwnershipFilter] = useState<OwnershipFilter>('all');
   const [editProject, setEditProject] = useState<any>(null);
   const [deleteProject, setDeleteProject] = useState<any>(null);
   const [deleting, setDeleting] = useState(false);
   const queryClient = useQueryClient();
+
+  const memberProjectIds = useMemo(() => new Set((memberships || []).map(m => m.project_id)), [memberships]);
+  const myDisplayName = profile?.display_name || '';
 
   const readinessMap = useMemo(() => {
     const map: Record<string, { percent: number; done: number; total: number }> = {};
@@ -51,15 +58,24 @@ export default function Projects() {
     return map;
   }, [readiness]);
 
+  const isProjectOwned = (p: any) => p.owner === myDisplayName;
+  const isProjectShared = (p: any) => memberProjectIds.has(p.id) && !isProjectOwned(p);
+
   const filtered = useMemo(() => {
     return (projects || []).filter(p => {
       const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) ||
         p.code.toLowerCase().includes(search.toLowerCase()) ||
         (p.industry || '').toLowerCase().includes(search.toLowerCase());
       const matchStage = stageFilter === 'all' || p.stage === stageFilter;
-      return matchSearch && matchStage;
+      const matchOwnership = ownershipFilter === 'all' ||
+        (ownershipFilter === 'mine' && isProjectOwned(p)) ||
+        (ownershipFilter === 'shared' && isProjectShared(p));
+      return matchSearch && matchStage && matchOwnership;
     });
-  }, [projects, search, stageFilter]);
+  }, [projects, search, stageFilter, ownershipFilter, memberProjectIds, myDisplayName]);
+
+  const sharedCount = useMemo(() => (projects || []).filter(p => isProjectShared(p)).length, [projects, memberProjectIds, myDisplayName]);
+  const ownedCount = useMemo(() => (projects || []).filter(p => isProjectOwned(p)).length, [projects, myDisplayName]);
 
   const handleDelete = async () => {
     if (!deleteProject) return;
@@ -89,6 +105,33 @@ export default function Projects() {
         <CreateProjectModal />
       </div>
 
+      {/* Ownership Tabs */}
+      <div className="flex items-center gap-1 bg-muted/30 rounded-lg p-1 w-fit border border-border/50">
+        {([
+          { value: 'all' as OwnershipFilter, label: 'All', count: (projects || []).length },
+          { value: 'mine' as OwnershipFilter, label: 'My Projects', count: ownedCount },
+          { value: 'shared' as OwnershipFilter, label: 'Shared with Me', count: sharedCount },
+        ]).map(tab => (
+          <button
+            key={tab.value}
+            onClick={() => setOwnershipFilter(tab.value)}
+            className={cn(
+              "px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5",
+              ownershipFilter === tab.value
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            {tab.value === 'shared' && <Users size={12} />}
+            {tab.label}
+            <span className={cn(
+              "text-[10px] px-1.5 py-0.5 rounded-full",
+              ownershipFilter === tab.value ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+            )}>{tab.count}</span>
+          </button>
+        ))}
+      </div>
+
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-2 bg-muted/30 rounded-lg px-3 py-2 flex-1 max-w-sm border border-border/50">
           <Search size={14} className="text-muted-foreground" />
@@ -113,18 +156,27 @@ export default function Projects() {
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Industry</th>
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Stage</th>
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Readiness</th>
-              <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Audience</th>
+              <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Access</th>
               <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-5 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((project, i) => {
               const r = readinessMap[project.id] || { percent: 0, done: 0, total: 0 };
+              const shared = isProjectShared(project);
+              const membership = (memberships || []).find(m => m.project_id === project.id);
               return (
                 <motion.tr key={project.id} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="border-b border-border/30 hover:bg-muted/20 transition-colors group">
                   <td className="px-5 py-3.5">
                     <Link to={`/projects/${project.id}`} className="block">
-                      <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{project.name}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{project.name}</div>
+                        {shared && (
+                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-info/10 text-info font-medium">
+                            <Users size={10} /> Shared
+                          </span>
+                        )}
+                      </div>
                       <div className="text-xs text-muted-foreground mt-0.5">{project.short_description}</div>
                     </Link>
                   </td>
@@ -139,7 +191,13 @@ export default function Projects() {
                   <td className="px-5 py-3.5"><span className="text-xs text-muted-foreground">{project.industry}</span></td>
                   <td className="px-5 py-3.5"><StageBadge stage={project.stage} /></td>
                   <td className="px-5 py-3.5"><ReadinessBar percent={r.percent} /></td>
-                  <td className="px-5 py-3.5"><span className="text-xs text-muted-foreground">{project.audience}</span></td>
+                  <td className="px-5 py-3.5">
+                    <span className={cn("text-xs capitalize",
+                      shared ? 'text-info' : 'text-muted-foreground'
+                    )}>
+                      {shared ? (membership?.access_level || 'view') : 'owner'}
+                    </span>
+                  </td>
                   <td className="px-5 py-3.5 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
