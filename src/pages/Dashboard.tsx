@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useProjects, useTasks, useLaunchReadiness, useProjectBurn, useDomains } from '@/hooks/useProjectData';
 import KpiCard from '@/components/cards/KpiCard';
+import LiveIssueFeed from '@/components/feeds/LiveIssueFeed';
 import StageBadge from '@/components/badges/StageBadge';
 import ReadinessBar from '@/components/badges/ReadinessBar';
 import { Link } from 'react-router-dom';
