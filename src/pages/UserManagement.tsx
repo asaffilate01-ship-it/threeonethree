@@ -509,52 +509,87 @@ export default function UserManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* ===== ADD ROLE TO EXISTING USER ===== */}
-      <Dialog open={editRoleOpen} onOpenChange={setEditRoleOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader><DialogTitle>Add Role</DialogTitle></DialogHeader>
-          <div className="space-y-2">
-            {ROLES.filter(r => !getRolesForUser(editUserId || '').some((ur: any) => ur.role === r)).map(role => (
-              <button key={role} onClick={() => editUserId && addRoleToExistingUser(editUserId, role)}
-                className="flex items-center gap-3 w-full p-3 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors text-left">
-                <Shield size={14} className="text-primary" />
-                <div>
-                  <div className="text-sm font-medium text-foreground capitalize">{role.replace('_', ' ')}</div>
-                  <div className="text-xs text-muted-foreground">{ROLE_DESCRIPTIONS[role]}</div>
+      {/* ===== EDIT USER DIALOG ===== */}
+      <Dialog open={editUserOpen} onOpenChange={setEditUserOpen}>
+        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+          </DialogHeader>
+          {editUserId && (() => {
+            const profile = (profiles || []).find((p: any) => p.id === editUserId);
+            return (
+              <div className="space-y-5">
+                <div className="glass-card rounded-lg p-3">
+                  <div className="text-sm font-semibold text-foreground">{profile?.display_name}</div>
+                  <div className="text-xs text-muted-foreground">{profile?.email}</div>
                 </div>
-              </button>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* ===== ADD PROJECT TO EXISTING USER ===== */}
-      <Dialog open={editProjectOpen} onOpenChange={setEditProjectOpen}>
-        <DialogContent className="sm:max-w-md max-h-[70vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Assign Project</DialogTitle></DialogHeader>
-          <div className="space-y-2">
-            {(projects || []).filter(p => !assignedProjectIds(editUserId || '').includes(p.id)).map(proj => (
-              <div key={proj.id} className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-border/30">
-                <div>
-                  <span className="text-xs font-bold text-muted-foreground mr-1.5">{proj.code}</span>
-                  <span className="text-sm text-foreground">{proj.name}</span>
-                </div>
-                <div className="flex gap-1">
-                  {ACCESS_LEVELS.filter(a => a.value !== 'none').map(a => {
-                    const Icon = a.icon;
-                    return (
-                      <button key={a.value} onClick={() => editUserId && addProjectToExistingUser(editUserId, proj.id, a.value)}
-                        className={cn("flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium transition-colors text-muted-foreground hover:text-foreground", a.color)}>
-                        <Icon size={10} /> {a.label}
+                {/* Roles */}
+                <div className="space-y-2">
+                  <div className="text-xs font-medium text-muted-foreground">Roles</div>
+                  <div className="space-y-1.5">
+                    {ROLES.map(role => (
+                      <button key={role} onClick={() => setEditUserRoles(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role])}
+                        className={cn(
+                          "flex items-center gap-3 w-full p-2.5 rounded-lg border transition-colors text-left",
+                          editUserRoles.includes(role) ? "border-primary bg-primary/5" : "border-border/50 hover:bg-muted/30"
+                        )}>
+                        <Checkbox checked={editUserRoles.includes(role)} className="pointer-events-none" />
+                        <div>
+                          <div className="text-sm font-medium text-foreground capitalize">{role.replace('_', ' ')}</div>
+                          <div className="text-xs text-muted-foreground">{ROLE_DESCRIPTIONS[role]}</div>
+                        </div>
                       </button>
-                    );
-                  })}
+                    ))}
+                  </div>
+                </div>
+
+                {/* Project Access */}
+                <div className="space-y-2">
+                  <div className="text-xs font-medium text-muted-foreground">Project Access</div>
+                  <div className="space-y-1.5 max-h-[35vh] overflow-y-auto pr-1">
+                    {(projects || []).map(proj => {
+                      const current = editUserAccess[proj.id] || 'none';
+                      return (
+                        <div key={proj.id} className="flex items-center justify-between py-2 px-3 rounded-lg border border-border/30 bg-muted/10">
+                          <div>
+                            <span className="text-xs font-bold text-muted-foreground mr-1.5">{proj.code}</span>
+                            <span className="text-sm text-foreground">{proj.name}</span>
+                          </div>
+                          <div className="flex gap-1">
+                            {ACCESS_LEVELS.map(a => {
+                              const Icon = a.icon;
+                              return (
+                                <button key={a.value} onClick={() => setEditUserAccess(prev => {
+                                  const next = { ...prev };
+                                  if (a.value === 'none') delete next[proj.id];
+                                  else next[proj.id] = a.value;
+                                  return next;
+                                })}
+                                  className={cn(
+                                    "flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium transition-colors",
+                                    current === a.value ? `${a.color} bg-foreground/5 ring-1 ring-current/30` : "text-muted-foreground hover:text-foreground"
+                                  )}>
+                                  <Icon size={10} /> {a.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setEditUserOpen(false)}>Cancel</Button>
+                  <Button onClick={handleSaveUser} disabled={editUserLoading}>
+                    {editUserLoading ? 'Saving…' : 'Save Changes'}
+                  </Button>
                 </div>
               </div>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
+            );
+          })()}
     </div>
   );
 }
