@@ -267,8 +267,6 @@ export default function UserManagement() {
 
   if (loadingProfiles) return <div className="flex items-center justify-center min-h-[60vh] text-sm text-muted-foreground">Loading…</div>;
 
-  const getRolesForUser = (userId: string) => (roles || []).filter((r: any) => r.user_id === userId);
-  const getMembershipsForUser = (userId: string) => (members || []).filter((m: any) => m.user_id === userId);
   const assignedProjectIds = (userId: string) => getMembershipsForUser(userId).map((m: any) => m.project_id);
 
   const STEPS: { key: WizardStep; label: string }[] = [
