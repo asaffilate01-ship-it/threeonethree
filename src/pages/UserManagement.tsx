@@ -316,26 +316,16 @@ export default function UserManagement() {
               {userProjects.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-border/30 space-y-1.5">
                   <div className="text-xs font-medium text-muted-foreground">Project Access</div>
-                  {userProjects.map((m: any) => (
-                    <div key={m.id} className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-muted/20">
-                      <span className="text-xs text-foreground font-medium">[{m.projects?.code}] {m.projects?.name}</span>
-                      <div className="flex items-center gap-2">
-                        <Select value={m.access_level} onValueChange={v => updateMemberAccess(m.id, v)}>
-                          <SelectTrigger className="h-6 text-[10px] w-20 border-none bg-transparent">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ACCESS_LEVELS.filter(a => a.value !== 'none').map(a => (
-                              <SelectItem key={a.value} value={a.value}>
-                                <span className={cn("text-xs", a.color)}>{a.label}</span>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <button onClick={() => removeMember(m.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={10} /></button>
-                      </div>
-                    </div>
-                  ))}
+                  <div className="flex gap-1.5 flex-wrap">
+                    {userProjects.map((m: any) => {
+                      const accessDef = ACCESS_LEVELS.find(a => a.value === m.access_level);
+                      return (
+                        <span key={m.id} className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-muted/30 text-foreground font-medium">
+                          {m.projects?.code} <span className={cn("capitalize", accessDef?.color)}>({accessDef?.label})</span>
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
