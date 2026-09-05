@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { portfolioProjects, teamPositions, thirdPartyActions } from '@/data/operatingModel';
+import { operatingWorkstreams, portfolioProjects, teamPositions, thirdPartyActions } from '@/data/operatingModel';
 
 describe('portfolio operating model', () => {
   it('contains the reconciled portfolio plus named additional projects', () => {
@@ -28,5 +28,13 @@ describe('portfolio operating model', () => {
       expect(action.escalation).toBeTruthy();
     }
   });
-});
 
+  it('has an explicit testing, UAT and release-control workstream', () => {
+    expect(teamPositions.map((position) => position.role)).toEqual(expect.arrayContaining([
+      'QA & Release Lead',
+      'UK and German UAT & Localisation Tester',
+      'Independent Security Tester',
+    ]));
+    expect(operatingWorkstreams.some((item) => item.title === 'Testing, UAT and release approval')).toBe(true);
+  });
+});

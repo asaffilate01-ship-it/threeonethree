@@ -20,6 +20,7 @@ The in-app **Team & Operations** section contains the role-by-role headcount, ph
 - A Head of B2B Sales, two UK account executives, two German account executives, two shared SDRs and a later agents/referrals manager.
 - A Head of Growth, SEO/performance manager, UK content/social/lifecycle manager and German localisation/content manager.
 - One Head of Product & Engineering, two portfolio product managers, four full-stack engineers, one mobile/Capacitor engineer, two QA engineers, one DevOps/security/data engineer and one product designer.
+- One QA and Release Lead, two UK/German UAT and localisation testers, and independent security testing capacity.
 - UK and German customer-success/support capacity, plus People Operations and portfolio administration.
 
 Specialist advice can begin externally and move in-house later. The CRM keeps the same task and evidence history when responsibility changes.
@@ -134,6 +135,19 @@ Every project in the Portfolio Register must receive the following linked work i
 - Device matrix, offline/network behaviour, privacy manifests and store data declarations.
 - Store listing, screenshots, support/privacy links, review responses and release process.
 
+### Testing, UAT and release approval
+
+- Unit tests for business rules and calculations, plus integration tests for database, APIs, webhooks and background jobs.
+- End-to-end tests for every user role, permissions/RLS, sign-up, onboarding, trial, payment, refund, cancellation and account recovery.
+- Payment-provider sandbox and production-readiness tests, including failures, duplicate callbacks, reconciliation, refunds, disputes and terminal/online ordering where relevant.
+- Cross-browser, responsive, accessibility and representative-device testing.
+- Capacitor/native testing for permissions, deep links, camera/files/location, push notifications, offline/network interruption, upgrades and store builds.
+- English and German localisation checks covering wording, layout, currency, tax, date/time, policies, email, SMS and WhatsApp templates.
+- Security testing for access control, injection, XSS, CSRF, file upload, secrets, rate limiting, audit logging and dependency vulnerabilities; obtain independent testing for higher-risk releases.
+- Client UAT with agreed scenarios and named acceptance owner; defects must be linked to the release.
+- Regression suite and release checklist after fixes, with critical/high issues closed or formally risk-accepted by authorised owners.
+- Release decision recording version/build, scope, evidence, approvers, known limitations, rollback plan and support owner.
+
 ### Communications and infrastructure
 
 - Domain ownership, registrar, DNS/CDN, SSL, renewal and recovery access.
@@ -188,4 +202,3 @@ UK activity starts with existing warm demand and converts controlled trials into
 - **Weekly:** project readiness, compliance exceptions, pipeline forecast, campaign results, delivery capacity and decisions.
 - **Monthly:** close and cash forecast, statutory calendar, access review exceptions, provider performance, customer retention and portfolio priorities.
 - **Quarterly:** country/brand investment, risk appetite, adviser/employee mix, headcount, vendor renewals and stop/start decisions.
-
