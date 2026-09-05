@@ -2022,6 +2022,7 @@ export type Database = {
           stage: Database["public"]["Enums"]["project_stage"]
           stripe_configured: boolean | null
           terms_done: boolean | null
+          territory: string
           test_domain: string | null
           updated_at: string
           whatsapp_configured: boolean | null
@@ -2077,6 +2078,7 @@ export type Database = {
           stage?: Database["public"]["Enums"]["project_stage"]
           stripe_configured?: boolean | null
           terms_done?: boolean | null
+          territory?: string
           test_domain?: string | null
           updated_at?: string
           whatsapp_configured?: boolean | null
@@ -2132,6 +2134,7 @@ export type Database = {
           stage?: Database["public"]["Enums"]["project_stage"]
           stripe_configured?: boolean | null
           terms_done?: boolean | null
+          territory?: string
           test_domain?: string | null
           updated_at?: string
           whatsapp_configured?: boolean | null
