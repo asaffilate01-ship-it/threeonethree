@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -125,6 +125,104 @@ export type Database = {
         }
         Relationships: []
       }
+      compliance_register: {
+        Row: {
+          account_id: string | null
+          authority: string | null
+          category: string
+          created_at: string
+          due_date: string | null
+          entity_name: string | null
+          evidence_url: string | null
+          exception_reason: string | null
+          external_adviser: string | null
+          id: string
+          legal_basis_or_scope: string | null
+          preparer_id: string | null
+          project_id: string | null
+          renewal_date: string | null
+          requirement: string
+          reviewer_id: string | null
+          risk_level: string
+          status: string
+          territory: string
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          authority?: string | null
+          category: string
+          created_at?: string
+          due_date?: string | null
+          entity_name?: string | null
+          evidence_url?: string | null
+          exception_reason?: string | null
+          external_adviser?: string | null
+          id?: string
+          legal_basis_or_scope?: string | null
+          preparer_id?: string | null
+          project_id?: string | null
+          renewal_date?: string | null
+          requirement: string
+          reviewer_id?: string | null
+          risk_level?: string
+          status?: string
+          territory: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          authority?: string | null
+          category?: string
+          created_at?: string
+          due_date?: string | null
+          entity_name?: string | null
+          evidence_url?: string | null
+          exception_reason?: string | null
+          external_adviser?: string | null
+          id?: string
+          legal_basis_or_scope?: string | null
+          preparer_id?: string | null
+          project_id?: string | null
+          renewal_date?: string | null
+          requirement?: string
+          reviewer_id?: string | null
+          risk_level?: string
+          status?: string
+          territory?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_register_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_register_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_register_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_register_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       costs: {
         Row: {
           annual_cost_gbp: number | null
@@ -191,6 +289,239 @@ export type Database = {
           },
           {
             foreignKeyName: "costs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_accounts: {
+        Row: {
+          account_type: string
+          company_number: string | null
+          created_at: string
+          email: string | null
+          id: string
+          legal_name: string | null
+          name: string
+          next_action: string | null
+          next_action_due: string | null
+          notes: string | null
+          owner_id: string | null
+          owner_label: string | null
+          phone: string | null
+          project_id: string | null
+          risk_rating: string | null
+          stage: string
+          tax_identifier: string | null
+          territory: string
+          updated_at: string
+          volume_label: string | null
+          website: string | null
+        }
+        Insert: {
+          account_type: string
+          company_number?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          legal_name?: string | null
+          name: string
+          next_action?: string | null
+          next_action_due?: string | null
+          notes?: string | null
+          owner_id?: string | null
+          owner_label?: string | null
+          phone?: string | null
+          project_id?: string | null
+          risk_rating?: string | null
+          stage?: string
+          tax_identifier?: string | null
+          territory: string
+          updated_at?: string
+          volume_label?: string | null
+          website?: string | null
+        }
+        Update: {
+          account_type?: string
+          company_number?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          legal_name?: string | null
+          name?: string
+          next_action?: string | null
+          next_action_due?: string | null
+          notes?: string | null
+          owner_id?: string | null
+          owner_label?: string | null
+          phone?: string | null
+          project_id?: string | null
+          risk_rating?: string | null
+          stage?: string
+          tax_identifier?: string | null
+          territory?: string
+          updated_at?: string
+          volume_label?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_accounts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_contacts: {
+        Row: {
+          account_id: string
+          created_at: string
+          do_not_contact: boolean
+          email: string | null
+          full_name: string
+          id: string
+          is_decision_maker: boolean
+          job_title: string | null
+          lawful_contact_basis: string | null
+          notes: string | null
+          owner_id: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          do_not_contact?: boolean
+          email?: string | null
+          full_name: string
+          id?: string
+          is_decision_maker?: boolean
+          job_title?: string | null
+          lawful_contact_basis?: string | null
+          notes?: string | null
+          owner_id?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          do_not_contact?: boolean
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_decision_maker?: boolean
+          job_title?: string | null
+          lawful_contact_basis?: string | null
+          notes?: string | null
+          owner_id?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_contacts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_deals: {
+        Row: {
+          account_id: string
+          created_at: string
+          currency: string
+          expected_close_date: string | null
+          id: string
+          loss_reason: string | null
+          owner_id: string | null
+          probability: number | null
+          project_id: string | null
+          stage: string
+          title: string
+          trial_end_date: string | null
+          trial_start_date: string | null
+          updated_at: string
+          value: number | null
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          currency?: string
+          expected_close_date?: string | null
+          id?: string
+          loss_reason?: string | null
+          owner_id?: string | null
+          probability?: number | null
+          project_id?: string | null
+          stage?: string
+          title: string
+          trial_end_date?: string | null
+          trial_start_date?: string | null
+          updated_at?: string
+          value?: number | null
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          currency?: string
+          expected_close_date?: string | null
+          id?: string
+          loss_reason?: string | null
+          owner_id?: string | null
+          probability?: number | null
+          project_id?: string | null
+          stage?: string
+          title?: string
+          trial_end_date?: string | null
+          trial_start_date?: string | null
+          updated_at?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "v_project_burn"
@@ -449,6 +780,100 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_campaigns: {
+        Row: {
+          audience_side: string
+          budget: number | null
+          channel: string
+          created_at: string
+          currency: string
+          customers: number
+          end_date: string | null
+          id: string
+          leads: number
+          meetings: number
+          name: string
+          next_action: string | null
+          objective: string
+          owner_id: string | null
+          project_id: string | null
+          spend: number
+          start_date: string | null
+          status: string
+          territory: string
+          trials: number
+          updated_at: string
+        }
+        Insert: {
+          audience_side: string
+          budget?: number | null
+          channel: string
+          created_at?: string
+          currency?: string
+          customers?: number
+          end_date?: string | null
+          id?: string
+          leads?: number
+          meetings?: number
+          name: string
+          next_action?: string | null
+          objective: string
+          owner_id?: string | null
+          project_id?: string | null
+          spend?: number
+          start_date?: string | null
+          status?: string
+          territory: string
+          trials?: number
+          updated_at?: string
+        }
+        Update: {
+          audience_side?: string
+          budget?: number | null
+          channel?: string
+          created_at?: string
+          currency?: string
+          customers?: number
+          end_date?: string | null
+          id?: string
+          leads?: number
+          meetings?: number
+          name?: string
+          next_action?: string | null
+          objective?: string
+          owner_id?: string | null
+          project_id?: string | null
+          spend?: number
+          start_date?: string | null
+          status?: string
+          territory?: string
+          trials?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_campaigns_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_campaigns_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_campaigns_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       milestones: {
         Row: {
           completed_at: string | null
@@ -497,6 +922,256 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      onboarding_cases: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          account_id: string
+          created_at: string
+          id: string
+          owner_id: string | null
+          project_id: string | null
+          reviewer_id: string | null
+          risk_rating: string | null
+          status: string
+          target_go_live: string | null
+          territory: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          account_id: string
+          created_at?: string
+          id?: string
+          owner_id?: string | null
+          project_id?: string | null
+          reviewer_id?: string | null
+          risk_rating?: string | null
+          status?: string
+          target_go_live?: string | null
+          territory: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          account_id?: string
+          created_at?: string
+          id?: string
+          owner_id?: string | null
+          project_id?: string | null
+          reviewer_id?: string | null
+          risk_rating?: string | null
+          status?: string
+          target_go_live?: string | null
+          territory?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_cases_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_steps: {
+        Row: {
+          category: string
+          completed_at: string | null
+          created_at: string
+          due_date: string | null
+          evidence_url: string | null
+          exception_reason: string | null
+          id: string
+          onboarding_case_id: string
+          owner_id: string | null
+          reviewer_id: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          completed_at?: string | null
+          created_at?: string
+          due_date?: string | null
+          evidence_url?: string | null
+          exception_reason?: string | null
+          id?: string
+          onboarding_case_id: string
+          owner_id?: string | null
+          reviewer_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          completed_at?: string | null
+          created_at?: string
+          due_date?: string | null
+          evidence_url?: string | null
+          exception_reason?: string | null
+          id?: string
+          onboarding_case_id?: string
+          owner_id?: string | null
+          reviewer_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_steps_onboarding_case_id_fkey"
+            columns: ["onboarding_case_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      operating_tasks: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          dependency: string | null
+          description: string | null
+          due_date: string | null
+          evidence_url: string | null
+          id: string
+          owner: string | null
+          owner_id: string | null
+          priority: string
+          project_code: string | null
+          reviewer: string | null
+          reviewer_id: string | null
+          status: string
+          territory: string
+          third_party: string | null
+          third_party_action_id: string | null
+          title: string
+          updated_at: string
+          workstream: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          dependency?: string | null
+          description?: string | null
+          due_date?: string | null
+          evidence_url?: string | null
+          id: string
+          owner?: string | null
+          owner_id?: string | null
+          priority?: string
+          project_code?: string | null
+          reviewer?: string | null
+          reviewer_id?: string | null
+          status?: string
+          territory: string
+          third_party?: string | null
+          third_party_action_id?: string | null
+          title: string
+          updated_at?: string
+          workstream: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          dependency?: string | null
+          description?: string | null
+          due_date?: string | null
+          evidence_url?: string | null
+          id?: string
+          owner?: string | null
+          owner_id?: string | null
+          priority?: string
+          project_code?: string | null
+          reviewer?: string | null
+          reviewer_id?: string | null
+          status?: string
+          territory?: string
+          third_party?: string | null
+          third_party_action_id?: string | null
+          title?: string
+          updated_at?: string
+          workstream?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operating_tasks_project_code_fkey"
+            columns: ["project_code"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "operating_tasks_third_party_action_id_fkey"
+            columns: ["third_party_action_id"]
+            isOneToOne: false
+            referencedRelation: "third_party_actions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      operations_audit_log: {
+        Row: {
+          action: string
+          changed_at: string
+          changed_by: string | null
+          id: number
+          new_data: Json | null
+          old_data: Json | null
+          row_id: string
+          table_name: string
+        }
+        Insert: {
+          action: string
+          changed_at?: string
+          changed_by?: string | null
+          id?: never
+          new_data?: Json | null
+          old_data?: Json | null
+          row_id: string
+          table_name: string
+        }
+        Update: {
+          action?: string
+          changed_at?: string
+          changed_by?: string | null
+          id?: never
+          new_data?: Json | null
+          old_data?: Json | null
+          row_id?: string
+          table_name?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -1347,6 +2022,7 @@ export type Database = {
           stage: Database["public"]["Enums"]["project_stage"]
           stripe_configured: boolean | null
           terms_done: boolean | null
+          territory: string
           test_domain: string | null
           updated_at: string
           whatsapp_configured: boolean | null
@@ -1402,6 +2078,7 @@ export type Database = {
           stage?: Database["public"]["Enums"]["project_stage"]
           stripe_configured?: boolean | null
           terms_done?: boolean | null
+          territory?: string
           test_domain?: string | null
           updated_at?: string
           whatsapp_configured?: boolean | null
@@ -1457,6 +2134,7 @@ export type Database = {
           stage?: Database["public"]["Enums"]["project_stage"]
           stripe_configured?: boolean | null
           terms_done?: boolean | null
+          territory?: string
           test_domain?: string | null
           updated_at?: string
           whatsapp_configured?: boolean | null
@@ -1696,6 +2374,155 @@ export type Database = {
           },
         ]
       }
+      team_positions: {
+        Row: {
+          created_at: string
+          department: string
+          engagement: string
+          filled_headcount: number
+          hiring_phase: string
+          id: string
+          owner_id: string | null
+          planned_headcount: number
+          qualification_required: string | null
+          responsibilities: string[]
+          role_title: string
+          status: string
+          territory: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          engagement?: string
+          filled_headcount?: number
+          hiring_phase?: string
+          id?: string
+          owner_id?: string | null
+          planned_headcount?: number
+          qualification_required?: string | null
+          responsibilities?: string[]
+          role_title: string
+          status?: string
+          territory: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          engagement?: string
+          filled_headcount?: number
+          hiring_phase?: string
+          id?: string
+          owner_id?: string | null
+          planned_headcount?: number
+          qualification_required?: string | null
+          responsibilities?: string[]
+          role_title?: string
+          status?: string
+          territory?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      third_party_actions: {
+        Row: {
+          account_id: string | null
+          can_be_brought_in_house: boolean
+          category: string
+          created_at: string
+          dependency: string | null
+          due_date: string | null
+          escalation_owner_id: string | null
+          evidence_url: string | null
+          external_owner_name: string | null
+          id: string
+          internal_owner_id: string | null
+          notes: string | null
+          organisation: string
+          project_id: string | null
+          qualification_required: string | null
+          renewal_date: string | null
+          required_deliverable: string
+          status: string
+          territory: string
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          can_be_brought_in_house?: boolean
+          category: string
+          created_at?: string
+          dependency?: string | null
+          due_date?: string | null
+          escalation_owner_id?: string | null
+          evidence_url?: string | null
+          external_owner_name?: string | null
+          id?: string
+          internal_owner_id?: string | null
+          notes?: string | null
+          organisation: string
+          project_id?: string | null
+          qualification_required?: string | null
+          renewal_date?: string | null
+          required_deliverable: string
+          status?: string
+          territory: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          can_be_brought_in_house?: boolean
+          category?: string
+          created_at?: string
+          dependency?: string | null
+          due_date?: string | null
+          escalation_owner_id?: string | null
+          evidence_url?: string | null
+          external_owner_name?: string | null
+          id?: string
+          internal_owner_id?: string | null
+          notes?: string | null
+          organisation?: string
+          project_id?: string | null
+          qualification_required?: string | null
+          renewal_date?: string | null
+          required_deliverable?: string
+          status?: string
+          territory?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "third_party_actions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "third_party_actions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "third_party_actions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "third_party_actions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -1749,6 +2576,7 @@ export type Database = {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
       }
+      can_manage_operations: { Args: { _user_id: string }; Returns: boolean }
       can_view_project: {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
@@ -1830,12 +2658,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1859,11 +2687,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1884,11 +2712,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1909,11 +2737,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1926,11 +2754,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
