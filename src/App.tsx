@@ -16,6 +16,12 @@ import Checklists from "@/pages/Checklists";
 import Reports from "@/pages/Reports";
 import QaDashboard from "@/pages/QaDashboard";
 import UserManagement from "@/pages/UserManagement";
+import Operations from "@/pages/Operations";
+import PortfolioRegistry from "@/pages/PortfolioRegistry";
+import Partners from "@/pages/Partners";
+import WorkBoard from "@/pages/WorkBoard";
+import Crm from "@/pages/Crm";
+import Marketing from "@/pages/Marketing";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -40,6 +46,12 @@ function ProtectedRoutes() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
+        <Route path="/portfolio" element={<PortfolioRegistry />} />
+        <Route path="/operations" element={<Operations />} />
+        <Route path="/work-board" element={<WorkBoard />} />
+        <Route path="/crm" element={<Crm />} />
+        <Route path="/partners" element={<Partners />} />
+        <Route path="/marketing" element={<Marketing />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/costs" element={<Costs />} />
         <Route path="/infra" element={<Infra />} />

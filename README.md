@@ -1,8 +1,33 @@
-# Welcome to your Lovable project
+# Group Control
+
+Internal portfolio operations, delivery and CRM workspace for iTechLounge's UK, German and international projects.
+
+The application now includes:
+
+- A 104-project canonical portfolio register.
+- UK/Germany staffing and responsibilities.
+- An auditable operations board for employees, agents, advisers and third parties.
+- CRM schema for organisations, contacts, deals and client onboarding.
+- Compliance and corporate-registration registers.
+- Third-party/provider actions, evidence, dependencies and renewals.
+- Separate gated marketing and sales planning.
+- Existing project, task, cost, infrastructure, integration, QA and reporting modules.
+- A development-only login shortcut that pre-fills the local admin account.
+
+See [the full operating model](docs/PORTFOLIO_OPERATING_MODEL.md) for the complete team, UK/Germany setup, client onboarding, third-party and per-project launch requirements.
+
+## Local setup
+
+```sh
+npm install
+npm run dev
+```
+
+Apply all Supabase migrations before shared CRM editing. The interface falls back to a read-only operating blueprint if the new operations tables are not yet available.
+
+The development login shortcut is compiled only when `import.meta.env.DEV` is true. It pre-fills `admin@groupcontrol.app` / `Admin123!`; the account itself must exist in the development Supabase project. Never create or use this credential in production.
 
 ## Project info
-
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 
 ## How can I edit this code?
 

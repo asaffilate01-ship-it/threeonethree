@@ -2,7 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, FolderKanban, ListTodo, PoundSterling,
-  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut, Bug, Users
+  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut, Bug, Users,
+  Building2, ContactRound, Network, Megaphone, Workflow
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +11,12 @@ import { useAuth } from '@/contexts/AuthContext';
 const NAV_ITEMS = [
   { path: '/',              label: 'Overview',      icon: LayoutDashboard },
   { path: '/projects',      label: 'Projects',      icon: FolderKanban },
+  { path: '/portfolio',     label: 'Portfolio Register', icon: Building2 },
+  { path: '/operations',    label: 'Team & Operations', icon: Users },
+  { path: '/work-board',    label: 'Operations Board', icon: Workflow },
+  { path: '/crm',           label: 'Clients & CRM', icon: ContactRound },
+  { path: '/partners',      label: 'Third Parties', icon: Network },
+  { path: '/marketing',     label: 'Marketing & Sales', icon: Megaphone },
   { path: '/tasks',         label: 'Tasks',         icon: ListTodo },
   { path: '/costs',         label: 'Costs',         icon: PoundSterling },
   { path: '/infra',         label: 'Domains & Infra', icon: Globe },
