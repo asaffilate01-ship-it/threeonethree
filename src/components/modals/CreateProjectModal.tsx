@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
-import { Constants } from '@/integrations/supabase/types';
+import { Constants, type Database } from '@/integrations/supabase/types';
 
 const STAGES = Constants.public.Enums.project_stage;
 
@@ -47,7 +47,7 @@ export default function CreateProjectModal({ trigger }: CreateProjectModalProps)
       industry: form.industry || null,
       audience: form.audience || null,
       revenue_model: form.revenue_model || null,
-      stage: form.stage as any,
+      stage: form.stage as Database['public']['Enums']['project_stage'],
       owner: form.owner || null,
     });
     setLoading(false);
@@ -75,7 +75,7 @@ export default function CreateProjectModal({ trigger }: CreateProjectModalProps)
           <DialogTitle>Create Project</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Name *</Label>
               <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="My Project" />
@@ -89,7 +89,7 @@ export default function CreateProjectModal({ trigger }: CreateProjectModalProps)
             <Label>Description</Label>
             <Textarea value={form.short_description} onChange={e => setForm(f => ({ ...f, short_description: e.target.value }))} placeholder="Brief description…" rows={2} />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Industry</Label>
               <Input value={form.industry} onChange={e => setForm(f => ({ ...f, industry: e.target.value }))} placeholder="e.g. Fintech" />
@@ -99,7 +99,7 @@ export default function CreateProjectModal({ trigger }: CreateProjectModalProps)
               <Input value={form.audience} onChange={e => setForm(f => ({ ...f, audience: e.target.value }))} placeholder="e.g. B2C" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Stage</Label>
               <Select value={form.stage} onValueChange={v => setForm(f => ({ ...f, stage: v }))}>

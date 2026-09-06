@@ -2,30 +2,33 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import AppShell from "@/components/layout/AppShell";
-import Dashboard from "@/pages/Dashboard";
-import Projects from "@/pages/Projects";
-import ProjectDetail from "@/pages/ProjectDetail";
-import Tasks from "@/pages/Tasks";
-import Costs from "@/pages/Costs";
-import Infra from "@/pages/Infra";
-import Integrations from "@/pages/Integrations";
-import Checklists from "@/pages/Checklists";
-import Reports from "@/pages/Reports";
-import QaDashboard from "@/pages/QaDashboard";
-import UserManagement from "@/pages/UserManagement";
-import Operations from "@/pages/Operations";
-import PortfolioRegistry from "@/pages/PortfolioRegistry";
-import Partners from "@/pages/Partners";
-import WorkBoard from "@/pages/WorkBoard";
-import Crm from "@/pages/Crm";
-import Marketing from "@/pages/Marketing";
-import Compliance from "@/pages/Compliance";
-import ActionCentre from "@/pages/ActionCentre";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
+import { AdminAccessGate, OperationsAccessGate } from "@/components/access/AccessGate";
+
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Projects = lazy(() => import("@/pages/Projects"));
+const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
+const Tasks = lazy(() => import("@/pages/Tasks"));
+const Costs = lazy(() => import("@/pages/Costs"));
+const Infra = lazy(() => import("@/pages/Infra"));
+const Integrations = lazy(() => import("@/pages/Integrations"));
+const Checklists = lazy(() => import("@/pages/Checklists"));
+const Reports = lazy(() => import("@/pages/Reports"));
+const QaDashboard = lazy(() => import("@/pages/QaDashboard"));
+const UserManagement = lazy(() => import("@/pages/UserManagement"));
+const Operations = lazy(() => import("@/pages/Operations"));
+const PortfolioRegistry = lazy(() => import("@/pages/PortfolioRegistry"));
+const Partners = lazy(() => import("@/pages/Partners"));
+const WorkBoard = lazy(() => import("@/pages/WorkBoard"));
+const Crm = lazy(() => import("@/pages/Crm"));
+const Marketing = lazy(() => import("@/pages/Marketing"));
+const Compliance = lazy(() => import("@/pages/Compliance"));
+const ActionCentre = lazy(() => import("@/pages/ActionCentre"));
 
 const queryClient = new QueryClient();
 
@@ -49,13 +52,13 @@ function ProtectedRoutes() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/portfolio" element={<PortfolioRegistry />} />
-        <Route path="/operations" element={<Operations />} />
-        <Route path="/work-board" element={<WorkBoard />} />
-        <Route path="/actions" element={<ActionCentre />} />
-        <Route path="/crm" element={<Crm />} />
-        <Route path="/compliance" element={<Compliance />} />
-        <Route path="/partners" element={<Partners />} />
-        <Route path="/marketing" element={<Marketing />} />
+        <Route path="/operations" element={<OperationsAccessGate><Operations /></OperationsAccessGate>} />
+        <Route path="/work-board" element={<OperationsAccessGate><WorkBoard /></OperationsAccessGate>} />
+        <Route path="/actions" element={<OperationsAccessGate><ActionCentre /></OperationsAccessGate>} />
+        <Route path="/crm" element={<OperationsAccessGate><Crm /></OperationsAccessGate>} />
+        <Route path="/compliance" element={<OperationsAccessGate><Compliance /></OperationsAccessGate>} />
+        <Route path="/partners" element={<OperationsAccessGate><Partners /></OperationsAccessGate>} />
+        <Route path="/marketing" element={<OperationsAccessGate><Marketing /></OperationsAccessGate>} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/costs" element={<Costs />} />
         <Route path="/infra" element={<Infra />} />
@@ -63,7 +66,7 @@ function ProtectedRoutes() {
         <Route path="/checklists" element={<Checklists />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/qa" element={<QaDashboard />} />
-        <Route path="/users" element={<UserManagement />} />
+        <Route path="/users" element={<AdminAccessGate><UserManagement /></AdminAccessGate>} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

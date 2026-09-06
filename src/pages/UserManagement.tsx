@@ -6,17 +6,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, Trash2, Shield, UserPlus, ChevronRight, Check, Pencil, Eye, EyeOff, Crown } from 'lucide-react';
+import { Shield, UserPlus, ChevronRight, Check, Pencil, Eye, EyeOff, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
+import type { Database, Tables } from '@/integrations/supabase/types';
+
+type AppRole = Database['public']['Enums']['app_role'];
+type Profile = Tables<'profiles'>;
+type UserRoleRecord = Tables<'user_roles'> & { profiles: Pick<Profile, 'display_name' | 'email'> | null };
+type ProjectMemberRecord = Tables<'project_members'> & {
+  profiles: Pick<Profile, 'display_name' | 'email'> | null;
+  projects: { name: string; code: string } | null;
+};
 
 const ROLES = ['admin', 'project_manager', 'viewer', 'finance', 'partner'] as const;
 const ROLE_DESCRIPTIONS: Record<string, string> = {
-  admin: 'Full access to everything',
-  project_manager: 'Manage assigned projects',
-  viewer: 'Read-only access',
-  finance: 'View costs & financial data',
-  partner: 'External partner access',
+  admin: 'Full access, including assigning users and roles',
+  project_manager: 'Edit internal operations and manage assigned projects',
+  viewer: 'Read-only internal operations access',
+  finance: 'Finance access plus read-only operational visibility',
+  partner: 'External access to explicitly assigned projects only',
 };
 const ACCESS_LEVELS = [
   { value: 'none', label: 'None', icon: EyeOff, color: 'text-muted-foreground' },
@@ -29,9 +38,9 @@ function useProfiles() {
   return useQuery({
     queryKey: ['profiles'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('profiles' as any).select('*').order('created_at');
+      const { data, error } = await supabase.from('profiles').select('*').order('created_at');
       if (error) throw error;
-      return data as any[];
+      return data as Profile[];
     },
   });
 }
@@ -40,9 +49,9 @@ function useUserRoles() {
   return useQuery({
     queryKey: ['user-roles'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('user_roles' as any).select('*, profiles:user_id(display_name, email)');
+      const { data, error } = await supabase.from('user_roles').select('*, profiles:user_id(display_name, email)');
       if (error) throw error;
-      return data as any[];
+      return data as UserRoleRecord[];
     },
   });
 }
@@ -51,9 +60,9 @@ function useProjectMembers() {
   return useQuery({
     queryKey: ['project-members'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('project_members' as any).select('*, profiles:user_id(display_name, email), projects:project_id(name, code)');
+      const { data, error } = await supabase.from('project_members').select('*, profiles:user_id(display_name, email), projects:project_id(name, code)');
       if (error) throw error;
-      return data as any[];
+      return data as ProjectMemberRecord[];
     },
   });
 }
@@ -83,24 +92,22 @@ export default function UserManagement() {
   const [wizardStep, setWizardStep] = useState<WizardStep>('details');
   const [wizardLoading, setWizardLoading] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '' });
-  const [newRoles, setNewRoles] = useState<string[]>([]);
+  const [newRoles, setNewRoles] = useState<AppRole[]>([]);
   const [projectAccess, setProjectAccess] = useState<Record<string, string>>({});
 
   // Edit user
   const [editUserId, setEditUserId] = useState<string | null>(null);
-  const [editRoleOpen, setEditRoleOpen] = useState(false);
-  const [editProjectOpen, setEditProjectOpen] = useState(false);
   const [editUserOpen, setEditUserOpen] = useState(false);
-  const [editUserRoles, setEditUserRoles] = useState<string[]>([]);
+  const [editUserRoles, setEditUserRoles] = useState<AppRole[]>([]);
   const [editUserAccess, setEditUserAccess] = useState<Record<string, string>>({});
   const [editUserLoading, setEditUserLoading] = useState(false);
 
   const openEditUser = (userId: string) => {
     setEditUserId(userId);
-    const currentRoles = getRolesForUser(userId).map((r: any) => r.role);
+    const currentRoles = getRolesForUser(userId).map((role) => role.role);
     setEditUserRoles(currentRoles);
     const currentAccess: Record<string, string> = {};
-    getMembershipsForUser(userId).forEach((m: any) => { currentAccess[m.project_id] = m.access_level; });
+    getMembershipsForUser(userId).forEach((membership) => { currentAccess[membership.project_id] = membership.access_level; });
     setEditUserAccess(currentAccess);
     setEditUserOpen(true);
   };
@@ -110,39 +117,39 @@ export default function UserManagement() {
     setEditUserLoading(true);
 
     const existingRoles = getRolesForUser(editUserId);
-    const existingRoleNames = existingRoles.map((r: any) => r.role);
+    const existingRoleNames = existingRoles.map((role) => role.role);
     
     // Remove roles that were unchecked
-    const rolesToRemove = existingRoles.filter((r: any) => !editUserRoles.includes(r.role));
+    const rolesToRemove = existingRoles.filter((role) => !editUserRoles.includes(role.role));
     for (const r of rolesToRemove) {
-      await supabase.from('user_roles' as any).delete().eq('id', r.id);
+      await supabase.from('user_roles').delete().eq('id', r.id);
     }
     // Add new roles
     const rolesToAdd = editUserRoles.filter(r => !existingRoleNames.includes(r));
     if (rolesToAdd.length > 0) {
-      await supabase.from('user_roles' as any).insert(rolesToAdd.map(role => ({ user_id: editUserId, role })));
+      await supabase.from('user_roles').insert(rolesToAdd.map(role => ({ user_id: editUserId, role })));
     }
 
     const existingMembers = getMembershipsForUser(editUserId);
-    const existingProjectIds = existingMembers.map((m: any) => m.project_id);
+    const existingProjectIds = existingMembers.map((membership) => membership.project_id);
     
     // Remove projects set to 'none' or removed
-    const membersToRemove = existingMembers.filter((m: any) => !editUserAccess[m.project_id] || editUserAccess[m.project_id] === 'none');
+    const membersToRemove = existingMembers.filter((membership) => !editUserAccess[membership.project_id] || editUserAccess[membership.project_id] === 'none');
     for (const m of membersToRemove) {
-      await supabase.from('project_members' as any).delete().eq('id', m.id);
+      await supabase.from('project_members').delete().eq('id', m.id);
     }
     // Update existing project access levels
     for (const m of existingMembers) {
       const newLevel = editUserAccess[m.project_id];
       if (newLevel && newLevel !== 'none' && newLevel !== m.access_level) {
-        await supabase.from('project_members' as any).update({ access_level: newLevel }).eq('id', m.id);
+        await supabase.from('project_members').update({ access_level: newLevel }).eq('id', m.id);
       }
     }
     // Add new project assignments
     const newProjects = Object.entries(editUserAccess)
       .filter(([pid, level]) => level !== 'none' && !existingProjectIds.includes(pid));
     if (newProjects.length > 0) {
-      await supabase.from('project_members' as any).insert(
+      await supabase.from('project_members').insert(
         newProjects.map(([project_id, access_level]) => ({ user_id: editUserId, project_id, access_level }))
       );
     }
@@ -154,8 +161,8 @@ export default function UserManagement() {
     setEditUserLoading(false);
   };
 
-  const getRolesForUser = (userId: string) => (roles || []).filter((r: any) => r.user_id === userId);
-  const getMembershipsForUser = (userId: string) => (members || []).filter((m: any) => m.user_id === userId);
+  const getRolesForUser = (userId: string) => (roles || []).filter((role) => role.user_id === userId);
+  const getMembershipsForUser = (userId: string) => (members || []).filter((membership) => membership.user_id === userId);
 
   const resetWizard = () => {
     setWizardStep('details');
@@ -170,7 +177,7 @@ export default function UserManagement() {
     setWizardOpen(true);
   };
 
-  const toggleRole = (role: string) => {
+  const toggleRole = (role: AppRole) => {
     setNewRoles(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]);
   };
 
@@ -186,38 +193,9 @@ export default function UserManagement() {
   const handleInviteAndSetup = async () => {
     if (!newUser.email) { toast.error('Email is required'); return; }
     setWizardLoading(true);
-
-    // 1. Create user via auth signup
-    const { data: authData, error: authErr } = await supabase.auth.signUp({
-      email: newUser.email,
-      password: Math.random().toString(36).slice(-12) + 'A1!',
-      options: { data: { display_name: newUser.name || newUser.email.split('@')[0] } },
-    });
-    if (authErr) { toast.error(authErr.message); setWizardLoading(false); return; }
-
-    const userId = authData.user?.id;
-    if (!userId) { toast.error('Failed to create user'); setWizardLoading(false); return; }
-
-    // Wait a moment for the trigger to create the profile
-    await new Promise(r => setTimeout(r, 1000));
-
-    // 2. Assign roles
-    if (newRoles.length > 0) {
-      const roleInserts = newRoles.map(role => ({ user_id: userId, role }));
-      const { error: roleErr } = await supabase.from('user_roles' as any).insert(roleInserts);
-      if (roleErr) toast.error('Role assignment failed: ' + roleErr.message);
-    }
-
-    // 3. Assign project permissions
-    const projectInserts = Object.entries(projectAccess).map(([project_id, access_level]) => ({
-      user_id: userId, project_id, access_level,
-    }));
-    if (projectInserts.length > 0) {
-      const { error: projErr } = await supabase.from('project_members' as any).insert(projectInserts);
-      if (projErr) toast.error('Project assignment failed: ' + projErr.message);
-    }
-
-    toast.success(`${newUser.name || newUser.email} invited successfully`);
+    const { error: inviteError } = await supabase.functions.invoke('invite-staff-user', { body: { email: newUser.email, displayName: newUser.name, roles: newRoles, projectAccess } });
+    if (inviteError) { toast.error('Invitation failed. Confirm the function is deployed and you have administrator access.'); setWizardLoading(false); return; }
+    toast.success(`${newUser.name || newUser.email} invited with the selected access`);
     queryClient.invalidateQueries({ queryKey: ['profiles'] });
     queryClient.invalidateQueries({ queryKey: ['user-roles'] });
     queryClient.invalidateQueries({ queryKey: ['project-members'] });
@@ -225,48 +203,7 @@ export default function UserManagement() {
     resetWizard();
   };
 
-  const removeRole = async (id: string) => {
-    const { error } = await supabase.from('user_roles' as any).delete().eq('id', id);
-    if (error) { toast.error(error.message); return; }
-    toast.success('Role removed');
-    queryClient.invalidateQueries({ queryKey: ['user-roles'] });
-  };
-
-  const removeMember = async (id: string) => {
-    const { error } = await supabase.from('project_members' as any).delete().eq('id', id);
-    if (error) { toast.error(error.message); return; }
-    toast.success('Removed');
-    queryClient.invalidateQueries({ queryKey: ['project-members'] });
-  };
-
-  const updateMemberAccess = async (id: string, access_level: string) => {
-    const { error } = await supabase.from('project_members' as any).update({ access_level }).eq('id', id);
-    if (error) { toast.error(error.message); return; }
-    toast.success('Access updated');
-    queryClient.invalidateQueries({ queryKey: ['project-members'] });
-  };
-
-  const addRoleToExistingUser = async (userId: string, role: string) => {
-    const { error } = await supabase.from('user_roles' as any).insert({ user_id: userId, role });
-    if (error) { toast.error(error.message); return; }
-    toast.success('Role assigned');
-    queryClient.invalidateQueries({ queryKey: ['user-roles'] });
-    setEditRoleOpen(false);
-  };
-
-  const addProjectToExistingUser = async (userId: string, projectId: string, accessLevel: string) => {
-    const { error } = await supabase.from('project_members' as any).insert({
-      user_id: userId, project_id: projectId, access_level: accessLevel,
-    });
-    if (error) { toast.error(error.message); return; }
-    toast.success('Project assigned');
-    queryClient.invalidateQueries({ queryKey: ['project-members'] });
-    setEditProjectOpen(false);
-  };
-
   if (loadingProfiles) return <div className="flex items-center justify-center min-h-[60vh] text-sm text-muted-foreground">Loading…</div>;
-
-  const assignedProjectIds = (userId: string) => getMembershipsForUser(userId).map((m: any) => m.project_id);
 
   const STEPS: { key: WizardStep; label: string }[] = [
     { key: 'details', label: 'Details' },
@@ -277,37 +214,41 @@ export default function UserManagement() {
 
   return (
     <div className="space-y-6 max-w-5xl">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">User Management</h1>
           <p className="text-sm text-muted-foreground mt-1">{(profiles || []).length} users</p>
         </div>
-        <Button size="sm" className="gap-1.5 text-xs" onClick={openWizard}>
+        <Button size="sm" className="min-h-10 shrink-0 gap-1.5 text-xs" onClick={openWizard}>
           <UserPlus size={14} /> Add User
         </Button>
       </div>
 
+      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+        <div className="flex items-start gap-3"><Shield size={18} className="mt-0.5 shrink-0 text-primary" /><div><div className="text-sm font-semibold text-foreground">Resolving missing access</div><p className="mt-1 text-xs leading-5 text-muted-foreground">Find the staff member below, choose Edit, assign the role that matches their job and add only the projects they need. Use Viewer for read-only staff, Project Manager for operational editing, Finance for finance work and Partner only for external project-scoped access.</p></div></div>
+      </div>
+
       {/* Users list */}
       <div className="space-y-3">
-        {(profiles || []).map((profile: any) => {
+        {(profiles || []).map((profile) => {
           const userRoles = getRolesForUser(profile.id);
           const userProjects = getMembershipsForUser(profile.id);
           return (
-            <div key={profile.id} className="glass-card rounded-xl p-5">
-              <div className="flex items-start justify-between">
+            <div key={profile.id} className="glass-card rounded-2xl p-4 sm:p-5">
+              <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-sm font-semibold text-foreground">{profile.display_name}</div>
                   <div className="text-xs text-muted-foreground">{profile.email}</div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
                   <div className="flex gap-1.5 flex-wrap">
-                    {userRoles.map((r: any) => (
+                    {userRoles.map((r) => (
                       <span key={r.id} className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium capitalize">
                         {r.role.replace('_', ' ')}
                       </span>
                     ))}
                   </div>
-                  <Button size="sm" variant="outline" className="h-6 px-2 text-[10px] gap-1" onClick={() => openEditUser(profile.id)}>
+                  <Button size="sm" variant="outline" className="min-h-9 px-3 text-[10px] gap-1" onClick={() => openEditUser(profile.id)}>
                     <Pencil size={10} /> Edit
                   </Button>
                 </div>
@@ -316,7 +257,7 @@ export default function UserManagement() {
                 <div className="mt-3 pt-3 border-t border-border/30 space-y-1.5">
                   <div className="text-xs font-medium text-muted-foreground">Project Access</div>
                   <div className="flex gap-1.5 flex-wrap">
-                    {userProjects.map((m: any) => {
+                    {userProjects.map((m) => {
                       const accessDef = ACCESS_LEVELS.find(a => a.value === m.access_level);
                       return (
                         <span key={m.id} className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-muted/30 text-foreground font-medium">
@@ -340,7 +281,7 @@ export default function UserManagement() {
           </DialogHeader>
 
           {/* Step indicator */}
-          <div className="flex items-center gap-1 mb-4">
+          <div className="native-scroll mb-4 flex items-center gap-1 overflow-x-auto pb-1">
             {STEPS.map((s, i) => (
               <div key={s.key} className="flex items-center gap-1">
                 <button
@@ -421,12 +362,12 @@ export default function UserManagement() {
                 {(projects || []).map(proj => {
                   const current = projectAccess[proj.id] || 'none';
                   return (
-                    <div key={proj.id} className="flex items-center justify-between py-2.5 px-3 rounded-lg border border-border/30 bg-muted/10">
+                    <div key={proj.id} className="flex flex-col gap-2 py-2.5 px-3 rounded-lg border border-border/30 bg-muted/10 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <span className="text-xs font-bold text-muted-foreground mr-1.5">{proj.code}</span>
                         <span className="text-sm text-foreground">{proj.name}</span>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="native-scroll flex max-w-full gap-1 overflow-x-auto">
                         {ACCESS_LEVELS.map(a => {
                           const Icon = a.icon;
                           return (
@@ -505,7 +446,7 @@ export default function UserManagement() {
             <DialogTitle>Edit User</DialogTitle>
           </DialogHeader>
           {editUserId && (() => {
-            const profile = (profiles || []).find((p: any) => p.id === editUserId);
+            const profile = (profiles || []).find((candidate) => candidate.id === editUserId);
             return (
               <div className="space-y-5">
                 <div className="glass-card rounded-lg p-3">
@@ -540,12 +481,12 @@ export default function UserManagement() {
                     {(projects || []).map(proj => {
                       const current = editUserAccess[proj.id] || 'none';
                       return (
-                        <div key={proj.id} className="flex items-center justify-between py-2 px-3 rounded-lg border border-border/30 bg-muted/10">
+                        <div key={proj.id} className="flex flex-col gap-2 py-2 px-3 rounded-lg border border-border/30 bg-muted/10 sm:flex-row sm:items-center sm:justify-between">
                           <div>
                             <span className="text-xs font-bold text-muted-foreground mr-1.5">{proj.code}</span>
                             <span className="text-sm text-foreground">{proj.name}</span>
                           </div>
-                          <div className="flex gap-1">
+                          <div className="native-scroll flex max-w-full gap-1 overflow-x-auto">
                             {ACCESS_LEVELS.map(a => {
                               const Icon = a.icon;
                               return (

@@ -78,6 +78,20 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    min-width: 320px;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+  }
+
+  @media (max-width: 1023px) {
+    input, select, textarea {
+      font-size: 16px;
+    }
   }
 
   /* Custom scrollbar */
@@ -113,7 +127,7 @@
   }
 
   .kpi-card {
-    @apply glass-card rounded-xl p-5 transition-all duration-200;
+    @apply glass-card rounded-xl p-3 transition-all duration-200 sm:p-5;
   }
 
   .kpi-card:hover {
@@ -123,5 +137,41 @@
 
   .stage-badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .mobile-tab-bar {
+    @apply fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 items-end border-t border-border/80 bg-background/95 px-2 pt-1 backdrop-blur-xl;
+    min-height: calc(4rem + env(safe-area-inset-bottom));
+    padding-bottom: max(0.35rem, env(safe-area-inset-bottom));
+    box-shadow: 0 -12px 32px hsl(222 47% 3% / 0.48);
+  }
+
+  .mobile-tab {
+    @apply flex min-h-12 flex-col items-center justify-end gap-1 rounded-xl px-1 pb-1 text-[10px] font-medium text-muted-foreground transition-colors;
+  }
+
+  .mobile-tab-active {
+    @apply text-primary;
+  }
+
+  .native-action-card {
+    @apply flex min-h-20 flex-col items-start justify-between rounded-2xl border border-border/60 bg-muted/25 p-4 text-left text-sm font-semibold text-foreground transition-colors active:bg-primary/10;
+  }
+
+  .top-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .native-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .native-scroll::-webkit-scrollbar {
+    display: none;
   }
 }

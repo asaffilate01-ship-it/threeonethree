@@ -1,13 +1,16 @@
 import { motion } from 'framer-motion';
 import { useProjects, useTasks, useLaunchReadiness, useProjectBurn, useDomains } from '@/hooks/useProjectData';
+import { useActionCentre } from '@/hooks/useOperationsWorkspace';
+import { getActionUrgency } from '@/lib/operationsWorkspace';
 import KpiCard from '@/components/cards/KpiCard';
 import LiveIssueFeed from '@/components/feeds/LiveIssueFeed';
 import StageBadge from '@/components/badges/StageBadge';
 import ReadinessBar from '@/components/badges/ReadinessBar';
+import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import {
   FolderKanban, Rocket, PoundSterling, Globe, ListTodo,
-  AlertTriangle, ArrowRight, TrendingUp, Calendar
+  AlertTriangle, ArrowRight, Calendar, BellRing
 } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -21,6 +24,7 @@ export default function Dashboard() {
   const { data: readiness } = useLaunchReadiness();
   const { data: burn } = useProjectBurn();
   const { data: domains } = useDomains();
+  const { data: operationalActions = [] } = useActionCentre();
 
   if (projLoading || taskLoading) {
     return <div className="flex items-center justify-center min-h-[60vh] text-sm text-muted-foreground">Loading…</div>;
@@ -38,6 +42,7 @@ export default function Dashboard() {
   const inProgressTasks = allTasks.filter(t => t.status === 'in_progress');
 
   const totalMonthlyBurn = (burn || []).reduce((s, b) => s + Number(b.est_monthly_burn_gbp || 0), 0);
+  const attentionActions = operationalActions.filter((item) => getActionUrgency(item.date).order <= 1).slice(0, 5);
 
   // Stage breakdown
   const stageCounts: Record<string, number> = {};
@@ -62,7 +67,7 @@ export default function Dashboard() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5 lg:gap-4">
         <KpiCard label="Total Projects" value={totalProjects} subtitle={`${buildProjects} building · ${ideaProjects} ideas`} icon={<FolderKanban size={18} />} />
         <KpiCard label="Live" value={liveProjects} subtitle={`${pausedProjects} paused`} icon={<Rocket size={18} />} />
         <KpiCard label="Monthly Burn" value={`£${Math.round(totalMonthlyBurn).toLocaleString()}`} subtitle={`£${Math.round(totalMonthlyBurn * 12).toLocaleString()} annual`} icon={<PoundSterling size={18} />} />
@@ -70,12 +75,14 @@ export default function Dashboard() {
         <KpiCard label="Domains" value={(domains || []).length} subtitle={`${upcomingRenewals.length} upcoming renewals`} icon={<Globe size={18} />} />
       </div>
 
+      {attentionActions.length > 0 && <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-2xl p-4 sm:p-5"><div className="mb-3 flex items-center justify-between"><div className="flex items-center gap-2"><BellRing size={17} className="text-primary" /><h2 className="text-sm font-semibold text-foreground">Today’s priorities</h2></div><Link to="/actions" className="text-xs text-primary">View all</Link></div><div className="space-y-2">{attentionActions.map((item) => { const urgency = getActionUrgency(item.date); return <Link key={`${item.source}-${item.id}`} to={item.link} className="flex min-h-12 items-center gap-3 rounded-xl bg-muted/25 px-3 py-2 transition-colors active:bg-primary/10"><span className={cn('h-2 w-2 shrink-0 rounded-full', urgency.order === 0 ? 'bg-destructive' : 'bg-warning')} /><div className="min-w-0 flex-1"><div className="truncate text-xs font-medium text-foreground">{item.title}</div><div className="truncate text-[10px] text-muted-foreground">{item.source} · {item.context}</div></div><span className={cn('shrink-0 rounded-full px-2 py-1 text-[10px]', urgency.style)}>{urgency.label}</span></Link>; })}</div></motion.section>}
+
       {/* Stage Breakdown */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card rounded-xl p-5">
         <h2 className="text-sm font-semibold text-foreground mb-4">Stage Breakdown</h2>
-        <div className="flex items-end gap-3">
+        <div className="native-scroll flex items-end gap-3 overflow-x-auto pb-2">
           {STAGE_ORDER.filter(s => stageCounts[s]).map(stage => (
-            <div key={stage} className="flex-1 text-center">
+            <div key={stage} className="min-w-20 flex-1 text-center">
               <div className="text-lg font-bold text-foreground">{stageCounts[stage]}</div>
               <div className="h-2 rounded-full bg-muted mt-1 overflow-hidden">
                 <div className="h-full rounded-full transition-all" style={{ width: `${(stageCounts[stage] / totalProjects) * 100}%`, backgroundColor: `hsl(var(--stage-${stage.replace('_', '-')}))` }} />
@@ -130,7 +137,7 @@ export default function Dashboard() {
                 <AlertTriangle size={14} className="text-destructive mt-0.5 shrink-0" />
                 <div>
                   <div className="text-sm text-foreground">{task.title}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{(task as any).projects?.code} · {task.blocked_reason}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{(task as { projects?: { code?: string } | null }).projects?.code} · {task.blocked_reason}</div>
                 </div>
               </div>
             ))}
@@ -181,7 +188,7 @@ export default function Dashboard() {
             <div key={task.id} className="p-3 rounded-lg bg-muted/30 border border-border/50 hover:border-primary/20 transition-colors">
               <div className="text-sm font-medium text-foreground">{task.title}</div>
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-xs text-muted-foreground font-mono">{(task as any).projects?.code}</span>
+                <span className="text-xs text-muted-foreground font-mono">{(task as { projects?: { code?: string } | null }).projects?.code}</span>
                 {task.due_date && <span className="text-xs text-muted-foreground">· Due {task.due_date}</span>}
               </div>
             </div>

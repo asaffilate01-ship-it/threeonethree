@@ -12,6 +12,8 @@ The application now includes:
 - Third-party/provider actions, evidence, dependencies, qualification needs and renewals.
 - A management action centre combining overdue and upcoming CRM, compliance, provider and operating work.
 - Editable hiring status and filled headcount against the UK, Germany and group staffing plan.
+- Native-style mobile navigation, touch controls, responsive cards, bottom-sheet forms and safe-area support.
+- An installable web-app manifest for a standalone mobile experience.
 - Separate gated marketing and sales planning.
 - Existing project, task, cost, infrastructure, integration, QA and reporting modules.
 - A development-only login shortcut that pre-fills the local admin account.
@@ -26,6 +28,10 @@ npm run dev
 ```
 
 Apply all Supabase migrations before using the CRM workspaces. Internal operations records are visible only to staff roles; administrators and project managers can edit them, while finance and viewer roles are read-only and partner accounts cannot access the portfolio-wide CRM data.
+
+If a staff member reports missing access, an administrator should open **Users & Roles**, edit that user and assign the narrowest suitable role plus only the projects they need. User Management itself is administrator-only.
+
+Deploy the authenticated `invite-staff-user` Supabase Edge Function before inviting new staff. It uses the project-provided Supabase service-role environment variable on the server; never place that key in browser environment variables.
 
 The development login shortcut is compiled only when `import.meta.env.DEV` is true. It pre-fills `admin@groupcontrol.app` / `Admin123!`; the account itself must exist in the development Supabase project. Never create or use this credential in production.
 

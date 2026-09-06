@@ -1,33 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import {
-  LayoutDashboard, FolderKanban, ListTodo, PoundSterling,
-  Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut, Bug, Users,
-  Building2, ContactRound, Network, Megaphone, Workflow, ShieldCheck, BellRing
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-
-const NAV_ITEMS = [
-  { path: '/',              label: 'Overview',      icon: LayoutDashboard },
-  { path: '/projects',      label: 'Projects',      icon: FolderKanban },
-  { path: '/portfolio',     label: 'Portfolio Register', icon: Building2 },
-  { path: '/operations',    label: 'Team & Operations', icon: Users },
-  { path: '/work-board',    label: 'Operations Board', icon: Workflow },
-  { path: '/actions',       label: 'Action Centre', icon: BellRing },
-  { path: '/crm',           label: 'Clients & CRM', icon: ContactRound },
-  { path: '/compliance',    label: 'Compliance', icon: ShieldCheck },
-  { path: '/partners',      label: 'Third Parties', icon: Network },
-  { path: '/marketing',     label: 'Marketing & Sales', icon: Megaphone },
-  { path: '/tasks',         label: 'Tasks',         icon: ListTodo },
-  { path: '/costs',         label: 'Costs',         icon: PoundSterling },
-  { path: '/infra',         label: 'Domains & Infra', icon: Globe },
-  { path: '/integrations',  label: 'Integrations',  icon: Puzzle },
-  { path: '/checklists',    label: 'Checklists',    icon: ClipboardList },
-  { path: '/qa',            label: 'QA & Testing',  icon: Bug },
-  { path: '/users',         label: 'Users & Roles', icon: Users },
-  { path: '/reports',       label: 'Reports',       icon: BarChart3 },
-];
+import { NAV_ITEMS } from './navigation';
 
 export default function Sidebar() {
   const location = useLocation();
@@ -36,7 +12,7 @@ export default function Sidebar() {
 
   return (
     <aside className={cn(
-      "fixed left-0 top-0 z-40 h-screen border-r border-sidebar-border bg-sidebar flex flex-col transition-all duration-300",
+      "fixed left-0 top-0 z-40 hidden h-screen border-r border-sidebar-border bg-sidebar lg:flex flex-col transition-all duration-300",
       collapsed ? "w-16" : "w-60"
     )}>
       {/* Logo */}

@@ -2,6 +2,14 @@ export function hasOperationsWriteAccess(roles: string[]) {
   return roles.some((role) => role === 'admin' || role === 'project_manager');
 }
 
+export function hasOperationsReadAccess(roles: string[]) {
+  return roles.some((role) => ['admin', 'project_manager', 'viewer', 'finance'].includes(role));
+}
+
+export function hasAdminAccess(roles: string[]) {
+  return roles.includes('admin');
+}
+
 export function getActionUrgency(date: string | null, now = new Date()) {
   if (!date) return { label: 'Schedule', style: 'bg-muted text-muted-foreground', order: 3 };
   const dueDate = new Date(`${date}T00:00:00`);

@@ -10,7 +10,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useProjects } from '@/hooks/useProjectData';
 import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
-import { Constants } from '@/integrations/supabase/types';
+import { Constants, type Database } from '@/integrations/supabase/types';
 
 const STATUSES = Constants.public.Enums.task_status;
 const PRIORITIES = Constants.public.Enums.priority_level;
@@ -47,8 +47,8 @@ export default function CreateTaskModal({ trigger, defaultProjectId }: CreateTas
       title: form.title,
       description: form.description || null,
       project_id: form.project_id,
-      priority: form.priority as any,
-      status: form.status as any,
+      priority: form.priority as Database['public']['Enums']['priority_level'],
+      status: form.status as Database['public']['Enums']['task_status'],
       assigned_to: form.assigned_to || null,
       due_date: form.due_date || null,
     });
@@ -86,7 +86,7 @@ export default function CreateTaskModal({ trigger, defaultProjectId }: CreateTas
             <Label>Description</Label>
             <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Task details…" rows={2} />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Project *</Label>
               <Select value={form.project_id} onValueChange={v => setForm(f => ({ ...f, project_id: v }))}>
@@ -110,7 +110,7 @@ export default function CreateTaskModal({ trigger, defaultProjectId }: CreateTas
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Status</Label>
               <Select value={form.status} onValueChange={v => setForm(f => ({ ...f, status: v }))}>
