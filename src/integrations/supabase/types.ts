@@ -390,6 +390,79 @@ export type Database = {
           },
         ]
       }
+      crm_activities: {
+        Row: {
+          account_id: string
+          activity_type: string
+          contact_id: string | null
+          created_at: string
+          created_by: string | null
+          deal_id: string | null
+          detail: string | null
+          id: string
+          next_action: string | null
+          next_action_due: string | null
+          occurred_at: string
+          owner_id: string | null
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          activity_type: string
+          contact_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deal_id?: string | null
+          detail?: string | null
+          id?: string
+          next_action?: string | null
+          next_action_due?: string | null
+          occurred_at?: string
+          owner_id?: string | null
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          activity_type?: string
+          contact_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deal_id?: string | null
+          detail?: string | null
+          id?: string
+          next_action?: string | null
+          next_action_due?: string | null
+          occurred_at?: string
+          owner_id?: string | null
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_activities_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "crm_deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_contacts: {
         Row: {
           account_id: string
@@ -2577,6 +2650,7 @@ export type Database = {
         Returns: boolean
       }
       can_manage_operations: { Args: { _user_id: string }; Returns: boolean }
+      can_view_operations: { Args: { _user_id: string }; Returns: boolean }
       can_view_project: {
         Args: { _project_id: string; _user_id: string }
         Returns: boolean
