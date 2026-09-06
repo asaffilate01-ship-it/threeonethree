@@ -29,6 +29,7 @@ const Crm = lazy(() => import("@/pages/Crm"));
 const Marketing = lazy(() => import("@/pages/Marketing"));
 const Compliance = lazy(() => import("@/pages/Compliance"));
 const ActionCentre = lazy(() => import("@/pages/ActionCentre"));
+const CaseDesk = lazy(() => import("@/pages/CaseDesk"));
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ function ProtectedRoutes() {
         <Route path="/operations" element={<OperationsAccessGate><Operations /></OperationsAccessGate>} />
         <Route path="/work-board" element={<OperationsAccessGate><WorkBoard /></OperationsAccessGate>} />
         <Route path="/actions" element={<OperationsAccessGate><ActionCentre /></OperationsAccessGate>} />
+        <Route path="/case-desk" element={<OperationsAccessGate><CaseDesk /></OperationsAccessGate>} />
         <Route path="/crm" element={<OperationsAccessGate><Crm /></OperationsAccessGate>} />
         <Route path="/compliance" element={<OperationsAccessGate><Compliance /></OperationsAccessGate>} />
         <Route path="/partners" element={<OperationsAccessGate><Partners /></OperationsAccessGate>} />

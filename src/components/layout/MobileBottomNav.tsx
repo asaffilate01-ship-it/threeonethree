@@ -57,6 +57,7 @@ export default function MobileBottomNav() {
             <CreateProjectModal trigger={<button className="native-action-card"><Plus size={20} /><span>New project</span></button>} />
             {[
               ['/crm', 'CRM account'],
+              ['/case-desk', 'Case / approval'],
               ['/compliance', 'Compliance'],
               ['/partners', 'Third party'],
               ['/marketing', 'Campaign plan'],

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Shield, UserPlus, ChevronRight, Check, Pencil, Eye, EyeOff, Crown } from 'lucide-react';
+import { Shield, UserPlus, ChevronRight, Check, Pencil, Eye, EyeOff, Crown, KeyRound, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { Database, Tables } from '@/integrations/supabase/types';
@@ -15,6 +15,10 @@ type AppRole = Database['public']['Enums']['app_role'];
 type Profile = Tables<'profiles'>;
 type UserRoleRecord = Tables<'user_roles'> & { profiles: Pick<Profile, 'display_name' | 'email'> | null };
 type ProjectMemberRecord = Tables<'project_members'> & {
+  profiles: Pick<Profile, 'display_name' | 'email'> | null;
+  projects: { name: string; code: string } | null;
+};
+type AccessRequestRecord = Tables<'access_requests'> & {
   profiles: Pick<Profile, 'display_name' | 'email'> | null;
   projects: { name: string; code: string } | null;
 };
@@ -78,6 +82,17 @@ function useAllProjects() {
   });
 }
 
+function useAccessRequests() {
+  return useQuery({
+    queryKey: ['access-requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('access_requests').select('*, profiles:requested_by(display_name, email), projects:project_id(name, code)').eq('status', 'pending').order('created_at');
+      if (error) throw error;
+      return data as AccessRequestRecord[];
+    },
+  });
+}
+
 type WizardStep = 'details' | 'role' | 'projects' | 'review';
 
 export default function UserManagement() {
@@ -85,6 +100,7 @@ export default function UserManagement() {
   const { data: roles } = useUserRoles();
   const { data: members } = useProjectMembers();
   const { data: projects } = useAllProjects();
+  const { data: accessRequests = [] } = useAccessRequests();
   const queryClient = useQueryClient();
 
   // Add user wizard
@@ -101,8 +117,10 @@ export default function UserManagement() {
   const [editUserRoles, setEditUserRoles] = useState<AppRole[]>([]);
   const [editUserAccess, setEditUserAccess] = useState<Record<string, string>>({});
   const [editUserLoading, setEditUserLoading] = useState(false);
+  const [resolvingRequestId, setResolvingRequestId] = useState<string | null>(null);
 
-  const openEditUser = (userId: string) => {
+  const openEditUser = (userId: string, requestId: string | null = null) => {
+    setResolvingRequestId(requestId);
     setEditUserId(userId);
     const currentRoles = getRolesForUser(userId).map((role) => role.role);
     setEditUserRoles(currentRoles);
@@ -154,11 +172,40 @@ export default function UserManagement() {
       );
     }
 
+    if (resolvingRequestId) {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error: requestError } = await supabase.from('access_requests').update({
+        status: 'approved',
+        reviewed_by: user?.id ?? null,
+        reviewed_at: new Date().toISOString(),
+        admin_notes: 'Role and project access assigned in User Management.',
+      }).eq('id', resolvingRequestId);
+      if (requestError) {
+        setEditUserLoading(false);
+        return toast.error(`User access saved, but the request could not be closed: ${requestError.message}`);
+      }
+    }
+
     toast.success('User updated');
     queryClient.invalidateQueries({ queryKey: ['user-roles'] });
     queryClient.invalidateQueries({ queryKey: ['project-members'] });
+    queryClient.invalidateQueries({ queryKey: ['access-requests'] });
     setEditUserOpen(false);
+    setResolvingRequestId(null);
     setEditUserLoading(false);
+  };
+
+  const denyAccessRequest = async (id: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase.from('access_requests').update({
+      status: 'denied',
+      reviewed_by: user?.id ?? null,
+      reviewed_at: new Date().toISOString(),
+      admin_notes: 'Request reviewed and declined by an administrator.',
+    }).eq('id', id);
+    if (error) return toast.error(error.message);
+    queryClient.invalidateQueries({ queryKey: ['access-requests'] });
+    toast.success('Access request closed');
   };
 
   const getRolesForUser = (userId: string) => (roles || []).filter((role) => role.user_id === userId);
@@ -227,6 +274,27 @@ export default function UserManagement() {
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
         <div className="flex items-start gap-3"><Shield size={18} className="mt-0.5 shrink-0 text-primary" /><div><div className="text-sm font-semibold text-foreground">Resolving missing access</div><p className="mt-1 text-xs leading-5 text-muted-foreground">Find the staff member below, choose Edit, assign the role that matches their job and add only the projects they need. Use Viewer for read-only staff, Project Manager for operational editing, Finance for finance work and Partner only for external project-scoped access.</p></div></div>
       </div>
+
+      {accessRequests.length > 0 && <section className="space-y-3" aria-label="Pending access requests">
+        <div className="flex items-center gap-2">
+          <KeyRound size={17} className="text-amber-400" />
+          <h2 className="text-sm font-semibold">Missing-access reports</h2>
+          <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-400">{accessRequests.length} pending</span>
+        </div>
+        {accessRequests.map((request) => <article key={request.id} className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div className="text-sm font-semibold">{request.profiles?.display_name || request.profiles?.email || 'Staff member'}</div>
+              <div className="mt-1 text-xs leading-5 text-muted-foreground">{request.reason}</div>
+              <div className="mt-2 text-[10px] text-muted-foreground">Requested role: {request.requested_role || 'Not specified'}{request.projects ? ` · ${request.projects.code} ${request.projects.name}` : ' · Portfolio access'}</div>
+            </div>
+            <div className="flex shrink-0 gap-2">
+              <Button variant="outline" size="sm" className="min-h-10" onClick={() => denyAccessRequest(request.id)}><X size={13} className="mr-1" />Decline</Button>
+              <Button size="sm" className="min-h-10" onClick={() => openEditUser(request.requested_by, request.id)}><Pencil size={13} className="mr-1" />Assign access</Button>
+            </div>
+          </div>
+        </article>)}
+      </section>}
 
       {/* Users list */}
       <div className="space-y-3">
@@ -440,10 +508,10 @@ export default function UserManagement() {
       </Dialog>
 
       {/* ===== EDIT USER DIALOG ===== */}
-      <Dialog open={editUserOpen} onOpenChange={setEditUserOpen}>
+      <Dialog open={editUserOpen} onOpenChange={(open) => { setEditUserOpen(open); if (!open) setResolvingRequestId(null); }}>
         <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
+            <DialogTitle>{resolvingRequestId ? 'Assign requested access' : 'Edit User'}</DialogTitle>
           </DialogHeader>
           {editUserId && (() => {
             const profile = (profiles || []).find((candidate) => candidate.id === editUserId);

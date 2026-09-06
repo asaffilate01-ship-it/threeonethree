@@ -11,6 +11,8 @@ The application now includes:
 - Compliance and corporate-registration registers with risk, review, due-date and renewal tracking.
 - Third-party/provider actions, evidence, dependencies, qualification needs and renewals.
 - A management action centre combining overdue and upcoming CRM, compliance, provider and operating work.
+- A mobile-first case desk linking operational cases, evidence review and accountable approval decisions.
+- A real missing-access workflow: staff report access problems and administrators resolve them from User Management.
 - Editable hiring status and filled headcount against the UK, Germany and group staffing plan.
 - Native-style mobile navigation, touch controls, responsive cards, bottom-sheet forms and safe-area support.
 - An installable web-app manifest for a standalone mobile experience.
@@ -30,6 +32,10 @@ npm run dev
 Apply all Supabase migrations before using the CRM workspaces. Internal operations records are visible only to staff roles; administrators and project managers can edit them, while finance and viewer roles are read-only and partner accounts cannot access the portfolio-wide CRM data.
 
 If a staff member reports missing access, an administrator should open **Users & Roles**, edit that user and assign the narrowest suitable role plus only the projects they need. User Management itself is administrator-only.
+
+Staff who reach a restricted internal workspace can now select **Report missing access**. The pending request appears at the top of **Users & Roles**; selecting **Assign access** opens that staff member's role and project controls, and saving the changes closes the request with an audit record.
+
+The **Cases & Approvals** workspace records client, compliance, complaint, incident, support, third-party, finance and people cases. Supporting evidence has a version, review date, expiry and approval status. Approval decisions record the approver, time and decision note and also feed the Action Centre.
 
 Deploy the authenticated `invite-staff-user` Supabase Edge Function before inviting new staff. It uses the project-provided Supabase service-role environment variable on the server; never place that key in browser environment variables.
 

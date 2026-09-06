@@ -27,10 +27,12 @@ describe('native mobile shell', () => {
     roles = ['partner'];
     const { rerender } = render(<OperationsAccessGate><div>Operations</div></OperationsAccessGate>);
     expect(screen.getByText('Access needs updating')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Report missing access' })).toBeInTheDocument();
 
     roles = ['viewer'];
     rerender(<OperationsAccessGate><div>Operations</div></OperationsAccessGate>);
     expect(screen.getByText('Operations')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Report missing access' })).not.toBeInTheDocument();
   });
 
   it('reserves User Management for administrators', () => {

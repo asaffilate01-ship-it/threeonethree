@@ -11,6 +11,9 @@ export type OnboardingStep = Tables<'onboarding_steps'>;
 export type ComplianceItem = Tables<'compliance_register'> & { projects: { name: string; code: string } | null; crm_accounts: { name: string } | null };
 export type ThirdPartyItem = Tables<'third_party_actions'> & { projects: { name: string; code: string } | null };
 export type TeamPositionRow = Tables<'team_positions'>;
+export type OperationalCase = Tables<'operational_cases'>;
+export type EvidenceItem = Tables<'evidence_register'>;
+export type ApprovalRequest = Tables<'approval_requests'>;
 
 export type CrmActivity = Tables<'crm_activities'>;
 
@@ -102,9 +105,29 @@ export function useTeamPositions() {
   });
 }
 
+export function useCaseDesk() {
+  return useQuery({
+    queryKey: ['case-desk'],
+    queryFn: async () => {
+      const [cases, evidence, approvals] = await Promise.all([
+        supabase.from('operational_cases').select('*').order('updated_at', { ascending: false }),
+        supabase.from('evidence_register').select('*').order('updated_at', { ascending: false }),
+        supabase.from('approval_requests').select('*').order('updated_at', { ascending: false }),
+      ]);
+      const error = cases.error || evidence.error || approvals.error;
+      if (error) throw error;
+      return {
+        cases: (cases.data ?? []) as OperationalCase[],
+        evidence: (evidence.data ?? []) as EvidenceItem[],
+        approvals: (approvals.data ?? []) as ApprovalRequest[],
+      };
+    },
+  });
+}
+
 export type ActionCentreItem = {
   id: string;
-  source: 'Work' | 'Compliance' | 'Third party' | 'CRM';
+  source: 'Work' | 'Compliance' | 'Third party' | 'CRM' | 'Case' | 'Approval' | 'Evidence';
   title: string;
   context: string;
   date: string | null;
@@ -117,19 +140,25 @@ export function useActionCentre() {
   return useQuery({
     queryKey: ['operations-action-centre'],
     queryFn: async () => {
-      const [tasks, compliance, partners, accounts] = await Promise.all([
+      const [tasks, compliance, partners, accounts, cases, approvals, evidence] = await Promise.all([
         supabase.from('operating_tasks').select('*').neq('status', 'done'),
         supabase.from('compliance_register').select('*, projects(name, code)').not('status', 'in', '(complete,completed,approved)'),
         supabase.from('third_party_actions').select('*, projects(name, code)').not('status', 'in', '(complete,completed,approved)'),
         supabase.from('crm_accounts').select('*').not('next_action_due', 'is', null),
+        supabase.from('operational_cases').select('*').not('status', 'in', '(resolved,closed)'),
+        supabase.from('approval_requests').select('*').eq('status', 'pending'),
+        supabase.from('evidence_register').select('*').in('status', ['submitted', 'in_review']),
       ]);
-      const error = tasks.error || compliance.error || partners.error || accounts.error;
+      const error = tasks.error || compliance.error || partners.error || accounts.error || cases.error || approvals.error || evidence.error;
       if (error) throw error;
       const items: ActionCentreItem[] = [];
       for (const row of tasks.data ?? []) items.push({ id: row.id, source: 'Work', title: row.title, context: `${row.workstream} · ${row.territory}`, date: row.due_date, status: row.status, priority: row.priority, link: '/work-board' });
       for (const row of compliance.data ?? []) items.push({ id: row.id, source: 'Compliance', title: row.requirement, context: `${row.projects?.name ?? row.entity_name ?? row.authority ?? 'Group'} · ${row.territory}`, date: row.due_date ?? row.renewal_date, status: row.status, priority: row.risk_level, link: '/compliance' });
       for (const row of partners.data ?? []) items.push({ id: row.id, source: 'Third party', title: row.organisation, context: `${row.required_deliverable} · ${row.territory}`, date: row.due_date ?? row.renewal_date, status: row.status, priority: row.due_date ? 'high' : 'medium', link: '/partners' });
       for (const row of accounts.data ?? []) items.push({ id: row.id, source: 'CRM', title: row.name, context: row.next_action ?? 'Next action required', date: row.next_action_due, status: row.stage, priority: 'medium', link: '/crm' });
+      for (const row of cases.data ?? []) items.push({ id: row.id, source: 'Case', title: row.title, context: `${row.case_reference} · ${row.case_type} · ${row.territory}`, date: row.due_date, status: row.status, priority: row.priority, link: '/case-desk' });
+      for (const row of approvals.data ?? []) items.push({ id: row.id, source: 'Approval', title: row.title, context: row.approval_type, date: row.due_date, status: row.status, priority: 'high', link: '/case-desk?view=approvals' });
+      for (const row of evidence.data ?? []) items.push({ id: row.id, source: 'Evidence', title: row.title, context: `${row.category} · version ${row.version}`, date: row.review_due ?? row.expires_on, status: row.status, priority: row.review_due ? 'high' : 'medium', link: '/case-desk?view=evidence' });
       return items.sort((a, b) => {
         if (!a.date) return 1;
         if (!b.date) return -1;
