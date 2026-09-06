@@ -17,12 +17,17 @@ import {
   ShieldCheck,
   Users,
   Workflow,
+  Rocket,
+  Layers3,
+  BriefcaseBusiness,
 } from 'lucide-react';
 
 export const NAV_ITEMS = [
   { path: '/', label: 'Overview', icon: LayoutDashboard },
   { path: '/projects', label: 'Projects', icon: FolderKanban },
   { path: '/portfolio', label: 'Portfolio Register', icon: Building2 },
+  { path: '/launch-control', label: 'Project Lifecycle', icon: Rocket },
+  { path: '/client-network', label: 'Client Network', icon: Layers3 },
   { path: '/operations', label: 'Team & Operations', icon: Users },
   { path: '/work-board', label: 'Operations Board', icon: Workflow },
   { path: '/actions', label: 'Action Centre', icon: BellRing },
@@ -31,6 +36,7 @@ export const NAV_ITEMS = [
   { path: '/compliance', label: 'Compliance', icon: ShieldCheck },
   { path: '/partners', label: 'Third Parties', icon: Network },
   { path: '/marketing', label: 'Marketing & Sales', icon: Megaphone },
+  { path: '/back-office', label: 'Admin, Finance & HR', icon: BriefcaseBusiness },
   { path: '/tasks', label: 'Tasks', icon: ListTodo },
   { path: '/costs', label: 'Costs', icon: PoundSterling },
   { path: '/infra', label: 'Domains & Infra', icon: Globe },

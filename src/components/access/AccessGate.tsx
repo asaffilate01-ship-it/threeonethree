@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { useOperationsPermission } from '@/hooks/useOperationsWorkspace';
-import { hasAdminAccess, hasOperationsReadAccess } from '@/lib/operationsWorkspace';
+import { hasAdminAccess, hasBackOfficeReadAccess, hasOperationsReadAccess } from '@/lib/operationsWorkspace';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 
@@ -9,7 +9,7 @@ function LoadingAccess() {
   return <div className="flex min-h-[50vh] items-center justify-center text-sm text-muted-foreground">Checking access…</div>;
 }
 
-function MissingAccess({ adminOnly = false }: { adminOnly?: boolean }) {
+function MissingAccess({ adminOnly = false, requestedRole = 'viewer' }: { adminOnly?: boolean; requestedRole?: string }) {
   const [requestState, setRequestState] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [requestError, setRequestError] = useState('');
 
@@ -18,7 +18,7 @@ function MissingAccess({ adminOnly = false }: { adminOnly?: boolean }) {
     setRequestError('');
     const { error } = await supabase.from('access_requests').insert({
       reason: 'Missing access reported from an internal operations workspace.',
-      requested_role: 'viewer',
+      requested_role: requestedRole,
     });
     if (error) {
       if (error.code === '23505') {
@@ -59,5 +59,12 @@ export function AdminAccessGate({ children }: { children: ReactNode }) {
   const { data, isLoading } = useOperationsPermission();
   if (isLoading) return <LoadingAccess />;
   if (!hasAdminAccess(data?.roles ?? [])) return <MissingAccess adminOnly />;
+  return children;
+}
+
+export function BackOfficeAccessGate({ children }: { children: ReactNode }) {
+  const { data, isLoading } = useOperationsPermission();
+  if (isLoading) return <LoadingAccess />;
+  if (!hasBackOfficeReadAccess(data?.roles ?? [])) return <MissingAccess requestedRole="finance" />;
   return children;
 }

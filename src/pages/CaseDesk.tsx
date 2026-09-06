@@ -96,6 +96,17 @@ export default function CaseDesk() {
     const { data: { user } } = await supabase.auth.getUser();
     const { error: updateError } = await supabase.from('approval_requests').update({ status: decision, decision_notes: decisionNotes || null, decided_at: new Date().toISOString(), approver_id: user?.id ?? null }).eq('id', activeApproval.id);
     if (updateError) return toast.error(updateError.message);
+    const linkedStatus = decision === 'approved' ? 'approved' : 'in_progress';
+    if (activeApproval.lifecycle_item_id) {
+      const { error: lifecycleError } = await supabase.from('project_lifecycle_items').update({ approval_status: decision, status: linkedStatus }).eq('id', activeApproval.lifecycle_item_id);
+      if (lifecycleError) return toast.error(`Decision saved, but the project gate could not be updated: ${lifecycleError.message}`);
+      queryClient.invalidateQueries({ queryKey: ['project-lifecycle'] });
+    }
+    if (activeApproval.client_onboarding_item_id) {
+      const { error: clientError } = await supabase.from('client_onboarding_items').update({ approval_status: decision, status: linkedStatus }).eq('id', activeApproval.client_onboarding_item_id);
+      if (clientError) return toast.error(`Decision saved, but client onboarding could not be updated: ${clientError.message}`);
+      queryClient.invalidateQueries({ queryKey: ['client-network'] });
+    }
     setActiveApproval(null); setDecisionNotes(''); refresh(); toast.success(`Approval ${human(decision)}`);
   };
 

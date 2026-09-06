@@ -13,6 +13,9 @@ The application now includes:
 - A management action centre combining overdue and upcoming CRM, compliance, provider and operating work.
 - A mobile-first case desk linking operational cases, evidence review and accountable approval decisions.
 - A real missing-access workflow: staff report access problems and administrators resolve them from User Management.
+- A full project lifecycle workspace covering business plans, branding, product approvals, legal, compliance, marketing, sales, onboarding, testing, native builds, integrations, communications, finance, administration and HR.
+- A client network for direct customers, sub-clients, franchisees, merchants and individual branches/sites, each with its own onboarding and compliance controls.
+- A restricted back office for administration, finance and HR obligations.
 - Editable hiring status and filled headcount against the UK, Germany and group staffing plan.
 - Native-style mobile navigation, touch controls, responsive cards, bottom-sheet forms and safe-area support.
 - An installable web-app manifest for a standalone mobile experience.
@@ -21,6 +24,8 @@ The application now includes:
 - A development-only login shortcut that pre-fills the local admin account.
 
 See [the full operating model](docs/PORTFOLIO_OPERATING_MODEL.md) for the complete team, UK/Germany setup, client onboarding, third-party and per-project launch requirements.
+
+See [the full lifecycle model](docs/FULL_LIFECYCLE_MODEL.md) for the project approval gates, client/sub-client hierarchy and administration, finance and HR controls.
 
 ## Local setup
 

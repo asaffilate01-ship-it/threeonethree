@@ -127,7 +127,7 @@ export function useCaseDesk() {
 
 export type ActionCentreItem = {
   id: string;
-  source: 'Work' | 'Compliance' | 'Third party' | 'CRM' | 'Case' | 'Approval' | 'Evidence';
+  source: 'Work' | 'Compliance' | 'Third party' | 'CRM' | 'Case' | 'Approval' | 'Evidence' | 'Project' | 'Client' | 'Back office';
   title: string;
   context: string;
   date: string | null;
@@ -140,7 +140,7 @@ export function useActionCentre() {
   return useQuery({
     queryKey: ['operations-action-centre'],
     queryFn: async () => {
-      const [tasks, compliance, partners, accounts, cases, approvals, evidence] = await Promise.all([
+      const [tasks, compliance, partners, accounts, cases, approvals, evidence, projects, clients, backOffice] = await Promise.all([
         supabase.from('operating_tasks').select('*').neq('status', 'done'),
         supabase.from('compliance_register').select('*, projects(name, code)').not('status', 'in', '(complete,completed,approved)'),
         supabase.from('third_party_actions').select('*, projects(name, code)').not('status', 'in', '(complete,completed,approved)'),
@@ -148,8 +148,11 @@ export function useActionCentre() {
         supabase.from('operational_cases').select('*').not('status', 'in', '(resolved,closed)'),
         supabase.from('approval_requests').select('*').eq('status', 'pending'),
         supabase.from('evidence_register').select('*').in('status', ['submitted', 'in_review']),
+        supabase.from('project_lifecycle_items').select('*').is('archived_at', null).not('status', 'in', '(approved,not_applicable)').or('status.eq.blocked,status.eq.ready_for_review,due_date.not.is.null'),
+        supabase.from('client_onboarding_items').select('*').is('archived_at', null).not('status', 'in', '(approved,not_applicable)').or('status.eq.blocked,status.eq.ready_for_review,due_date.not.is.null'),
+        supabase.from('back_office_items').select('*').is('archived_at', null).not('status', 'in', '(complete,not_applicable)'),
       ]);
-      const error = tasks.error || compliance.error || partners.error || accounts.error || cases.error || approvals.error || evidence.error;
+      const error = tasks.error || compliance.error || partners.error || accounts.error || cases.error || approvals.error || evidence.error || projects.error || clients.error || backOffice.error;
       if (error) throw error;
       const items: ActionCentreItem[] = [];
       for (const row of tasks.data ?? []) items.push({ id: row.id, source: 'Work', title: row.title, context: `${row.workstream} · ${row.territory}`, date: row.due_date, status: row.status, priority: row.priority, link: '/work-board' });
@@ -159,6 +162,9 @@ export function useActionCentre() {
       for (const row of cases.data ?? []) items.push({ id: row.id, source: 'Case', title: row.title, context: `${row.case_reference} · ${row.case_type} · ${row.territory}`, date: row.due_date, status: row.status, priority: row.priority, link: '/case-desk' });
       for (const row of approvals.data ?? []) items.push({ id: row.id, source: 'Approval', title: row.title, context: row.approval_type, date: row.due_date, status: row.status, priority: 'high', link: '/case-desk?view=approvals' });
       for (const row of evidence.data ?? []) items.push({ id: row.id, source: 'Evidence', title: row.title, context: `${row.category} · version ${row.version}`, date: row.review_due ?? row.expires_on, status: row.status, priority: row.review_due ? 'high' : 'medium', link: '/case-desk?view=evidence' });
+      for (const row of projects.data ?? []) items.push({ id: row.id, source: 'Project', title: row.title, context: `${row.workstream} · project launch control`, date: row.due_date, status: row.status, priority: row.priority, link: '/launch-control' });
+      for (const row of clients.data ?? []) items.push({ id: row.id, source: 'Client', title: row.title, context: `${row.workstream} · client onboarding`, date: row.due_date, status: row.status, priority: row.compliance_risk, link: '/client-network' });
+      for (const row of backOffice.data ?? []) items.push({ id: row.id, source: 'Back office', title: row.title, context: `${row.function_area} · ${row.entity_name ?? row.territory}`, date: row.due_date, status: row.status, priority: row.priority, link: '/back-office' });
       return items.sort((a, b) => {
         if (!a.date) return 1;
         if (!b.date) return -1;

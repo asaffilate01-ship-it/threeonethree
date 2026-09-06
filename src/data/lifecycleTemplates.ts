@@ -1,0 +1,266 @@
+export const PROJECT_LIFECYCLE_TEMPLATE = [
+  [
+    "Strategy",
+    "Project details and business plan",
+    "Proposition, customer, payer, pricing, territory, delivery model, risks and milestones",
+    "critical",
+  ],
+  [
+    "Brand",
+    "Brand name, slogan and identity",
+    "Approved name, slogan, colours, typography and brand rules",
+    "high",
+  ],
+  [
+    "Brand",
+    "Logo and graphics pack",
+    "Master logo, transparent variants, favicon, social and app-store graphics",
+    "high",
+  ],
+  [
+    "Product",
+    "UI and UX approval",
+    "Desktop, mobile, accessibility and key journey approval",
+    "critical",
+  ],
+  [
+    "Product",
+    "Features and functionality approval",
+    "Scope, roles, permissions, acceptance criteria and deferred features",
+    "critical",
+  ],
+  [
+    "Product",
+    "Application or SaaS build",
+    "Web application, dashboards, persistent data and production configuration",
+    "critical",
+  ],
+  [
+    "Product",
+    "Native mobile build",
+    "Capacitor/native configuration, permissions, signing and device acceptance",
+    "high",
+  ],
+  [
+    "Testing",
+    "Quality and release testing",
+    "Unit, integration, E2E, role/RLS, accessibility, device and regression evidence",
+    "critical",
+  ],
+  [
+    "Testing",
+    "Security and privacy testing",
+    "OWASP, dependency, secrets, RLS, file, monitoring and retest controls",
+    "critical",
+  ],
+  [
+    "Legal",
+    "Legal entity and trading names",
+    "Approved legal owner, registration and trading-name record",
+    "critical",
+  ],
+  [
+    "Legal",
+    "Domains and DNS",
+    "Clearance, registration, ownership, DNS, SSL and renewals",
+    "high",
+  ],
+  [
+    "Legal",
+    "Trademark clearance and filing",
+    "Search, classes, territories, filing, objections and renewals",
+    "high",
+  ],
+  [
+    "Compliance",
+    "Product compliance classification",
+    "Laws, regulators, permissions, policies, records and review cycle",
+    "critical",
+  ],
+  [
+    "Compliance",
+    "Terms, privacy and consent",
+    "Terms, privacy, cookies, marketing consent, retention and DSAR controls",
+    "critical",
+  ],
+  [
+    "Marketing",
+    "Online marketing plan",
+    "SEO, content, PPC, directories, analytics and territory launch plan",
+    "high",
+  ],
+  [
+    "Marketing",
+    "Social media setup and plan",
+    "Accounts, handles, access, creative calendar, approvals and responses",
+    "medium",
+  ],
+  [
+    "Marketing",
+    "Direct and field marketing plan",
+    "Visits, calls, mail, events, agents, partnerships and referrals",
+    "high",
+  ],
+  [
+    "Sales",
+    "Sales process and targets",
+    "ICP, leads, scripts, demos, proposals, targets and handover",
+    "high",
+  ],
+  [
+    "Sales",
+    "Cross-selling plan",
+    "Eligible services, consent, ownership, timing and referral attribution",
+    "medium",
+  ],
+  [
+    "Client Operations",
+    "Client onboarding design",
+    "Contract, KYB/KYC, setup, migration, training, acceptance and go-live",
+    "critical",
+  ],
+  [
+    "Client Operations",
+    "Client compliance onboarding",
+    "Risk assessment, evidence, approval, exceptions and reviews",
+    "critical",
+  ],
+  [
+    "Integrations",
+    "Third-party connections and APIs",
+    "Provider, contract, credentials, sandbox, webhooks, tests and approval",
+    "critical",
+  ],
+  [
+    "Communications",
+    "Email setup",
+    "Mailboxes, SPF, DKIM, DMARC, templates, consent and support routing",
+    "high",
+  ],
+  [
+    "Communications",
+    "Phone and WhatsApp setup",
+    "Numbers, ownership, verification, routing, consent and templates",
+    "high",
+  ],
+  [
+    "Finance",
+    "Pricing, billing and finance controls",
+    "Pricing, tax, invoicing, payments, reconciliation, refunds and reporting",
+    "critical",
+  ],
+  [
+    "Administration",
+    "Operating administration",
+    "Registers, filing calendar, document control, insurance and renewals",
+    "high",
+  ],
+  [
+    "People",
+    "HR and staffing plan",
+    "Roles, hiring, contracts, checks, payroll, training and leaver access removal",
+    "high",
+  ],
+] as const;
+
+export const CLIENT_ONBOARDING_TEMPLATE = [
+  [
+    "Commercial",
+    "Signed agreement and approved pricing",
+    "Entity, service, payer, trial, price, term and cancellation",
+    true,
+    "high",
+  ],
+  [
+    "Identity",
+    "Business and owner verification",
+    "Legal name, registration, beneficial owners and representative authority",
+    true,
+    "high",
+  ],
+  [
+    "Compliance",
+    "Risk and regulatory assessment",
+    "Service compliance, licences, sanctions and prohibited activity",
+    true,
+    "critical",
+  ],
+  [
+    "Compliance",
+    "Privacy, consent and data processing",
+    "Controller/processor roles, DPA, consent, retention and data flows",
+    true,
+    "high",
+  ],
+  [
+    "Configuration",
+    "Account and branch configuration",
+    "Users, roles, branches, products, permissions and settings",
+    false,
+    "medium",
+  ],
+  [
+    "Data",
+    "Import and migration",
+    "Source, mapping, authority, validation, reconciliation and deletion",
+    true,
+    "high",
+  ],
+  [
+    "Integrations",
+    "Payments and third-party connections",
+    "Merchant/provider IDs, credentials, endpoints, webhooks and testing",
+    true,
+    "critical",
+  ],
+  [
+    "Communications",
+    "Email, phone and WhatsApp",
+    "Addresses, numbers, sender verification, routing and templates",
+    false,
+    "medium",
+  ],
+  [
+    "Training",
+    "Staff training and acceptance",
+    "Owners, managers and staff training with attendance evidence",
+    false,
+    "medium",
+  ],
+  [
+    "Testing",
+    "Client UAT and go-live test",
+    "Roles, workflows, payments, notifications, reports and mobile devices",
+    true,
+    "critical",
+  ],
+  [
+    "Go Live",
+    "Go-live approval",
+    "Critical blockers closed, support confirmed and launch approved",
+    true,
+    "critical",
+  ],
+  [
+    "Service",
+    "Support, review and renewal",
+    "SLA, adoption, incidents, compliance reviews and renewal",
+    false,
+    "medium",
+  ],
+  [
+    "Growth",
+    "Cross-selling and referrals",
+    "Eligible services, permission, timing, owner and referral attribution",
+    false,
+    "low",
+  ],
+] as const;
+
+export function lifecycleProgress(items: Array<{ status: string }>) {
+  if (!items.length) return 0;
+  const complete = items.filter((item) =>
+    ["approved", "not_applicable"].includes(item.status),
+  ).length;
+  return Math.round((complete / items.length) * 100);
+}

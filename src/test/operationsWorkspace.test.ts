@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getActionUrgency, hasAdminAccess, hasOperationsReadAccess, hasOperationsWriteAccess } from '@/lib/operationsWorkspace';
+import { getActionUrgency, hasAdminAccess, hasBackOfficeReadAccess, hasOperationsReadAccess, hasOperationsWriteAccess } from '@/lib/operationsWorkspace';
 
 describe('operations workspace controls', () => {
   it('only gives operations write access to administrators and project managers', () => {
@@ -15,6 +15,13 @@ describe('operations workspace controls', () => {
     expect(hasOperationsReadAccess(['partner'])).toBe(false);
     expect(hasAdminAccess(['project_manager'])).toBe(false);
     expect(hasAdminAccess(['admin'])).toBe(true);
+  });
+
+  it('restricts the back office to management and finance roles', () => {
+    expect(hasBackOfficeReadAccess(['finance'])).toBe(true);
+    expect(hasBackOfficeReadAccess(['project_manager'])).toBe(true);
+    expect(hasBackOfficeReadAccess(['viewer'])).toBe(false);
+    expect(hasBackOfficeReadAccess(['partner'])).toBe(false);
   });
 
   it('orders overdue, upcoming, future and unscheduled work correctly', () => {

@@ -2,7 +2,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
-import { AdminAccessGate, OperationsAccessGate } from '@/components/access/AccessGate';
+import { AdminAccessGate, BackOfficeAccessGate, OperationsAccessGate } from '@/components/access/AccessGate';
 
 let roles: string[] = [];
 
@@ -43,5 +43,15 @@ describe('native mobile shell', () => {
     roles = ['admin'];
     rerender(<AdminAccessGate><div>User management</div></AdminAccessGate>);
     expect(screen.getByText('User management')).toBeInTheDocument();
+  });
+
+  it('allows finance into the back office but not general viewers', () => {
+    roles = ['viewer'];
+    const { rerender } = render(<BackOfficeAccessGate><div>Back office</div></BackOfficeAccessGate>);
+    expect(screen.getByText('Access needs updating')).toBeInTheDocument();
+
+    roles = ['finance'];
+    rerender(<BackOfficeAccessGate><div>Back office</div></BackOfficeAccessGate>);
+    expect(screen.getByText('Back office')).toBeInTheDocument();
   });
 });

@@ -143,6 +143,7 @@ export type Database = {
           approval_type: string
           approver_id: string | null
           case_id: string | null
+          client_onboarding_item_id: string | null
           created_at: string
           decided_at: string | null
           decision_notes: string | null
@@ -150,6 +151,7 @@ export type Database = {
           due_date: string | null
           evidence_id: string | null
           id: string
+          lifecycle_item_id: string | null
           project_id: string | null
           requested_by: string | null
           status: string
@@ -161,6 +163,7 @@ export type Database = {
           approval_type: string
           approver_id?: string | null
           case_id?: string | null
+          client_onboarding_item_id?: string | null
           created_at?: string
           decided_at?: string | null
           decision_notes?: string | null
@@ -168,6 +171,7 @@ export type Database = {
           due_date?: string | null
           evidence_id?: string | null
           id?: string
+          lifecycle_item_id?: string | null
           project_id?: string | null
           requested_by?: string | null
           status?: string
@@ -179,6 +183,7 @@ export type Database = {
           approval_type?: string
           approver_id?: string | null
           case_id?: string | null
+          client_onboarding_item_id?: string | null
           created_at?: string
           decided_at?: string | null
           decision_notes?: string | null
@@ -186,6 +191,7 @@ export type Database = {
           due_date?: string | null
           evidence_id?: string | null
           id?: string
+          lifecycle_item_id?: string | null
           project_id?: string | null
           requested_by?: string | null
           status?: string
@@ -271,6 +277,216 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      back_office_items: {
+        Row: {
+          account_id: string | null
+          amount: number | null
+          archived_at: string | null
+          confidential: boolean
+          created_at: string
+          currency: string
+          description: string | null
+          due_date: string | null
+          entity_name: string | null
+          evidence_url: string | null
+          function_area: string
+          id: string
+          notes: string | null
+          owner_id: string | null
+          priority: string
+          project_id: string | null
+          recurrence: string | null
+          reviewer_id: string | null
+          status: string
+          territory: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          amount?: number | null
+          archived_at?: string | null
+          confidential?: boolean
+          created_at?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          entity_name?: string | null
+          evidence_url?: string | null
+          function_area: string
+          id?: string
+          notes?: string | null
+          owner_id?: string | null
+          priority?: string
+          project_id?: string | null
+          recurrence?: string | null
+          reviewer_id?: string | null
+          status?: string
+          territory?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          amount?: number | null
+          archived_at?: string | null
+          confidential?: boolean
+          created_at?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          entity_name?: string | null
+          evidence_url?: string | null
+          function_area?: string
+          id?: string
+          notes?: string | null
+          owner_id?: string | null
+          priority?: string
+          project_id?: string | null
+          recurrence?: string | null
+          reviewer_id?: string | null
+          status?: string
+          territory?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      client_onboarding_items: {
+        Row: {
+          account_id: string
+          approval_required: boolean
+          approval_status: string
+          archived_at: string | null
+          compliance_risk: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          evidence_url: string | null
+          id: string
+          next_review_date: string | null
+          notes: string | null
+          owner_id: string | null
+          reviewer_id: string | null
+          site_id: string | null
+          status: string
+          title: string
+          updated_at: string
+          workstream: string
+        }
+        Insert: {
+          account_id: string
+          approval_required?: boolean
+          approval_status?: string
+          archived_at?: string | null
+          compliance_risk?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          evidence_url?: string | null
+          id?: string
+          next_review_date?: string | null
+          notes?: string | null
+          owner_id?: string | null
+          reviewer_id?: string | null
+          site_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          workstream: string
+        }
+        Update: {
+          account_id?: string
+          approval_required?: boolean
+          approval_status?: string
+          archived_at?: string | null
+          compliance_risk?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          evidence_url?: string | null
+          id?: string
+          next_review_date?: string | null
+          notes?: string | null
+          owner_id?: string | null
+          reviewer_id?: string | null
+          site_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          workstream?: string
+        }
+        Relationships: []
+      }
+      client_sites: {
+        Row: {
+          account_id: string
+          address: string | null
+          archived_at: string | null
+          created_at: string
+          external_reference: string | null
+          id: string
+          legal_name: string | null
+          manager_email: string | null
+          manager_name: string | null
+          manager_phone: string | null
+          parent_site_id: string | null
+          postcode: string | null
+          project_id: string | null
+          site_name: string
+          site_type: string
+          status: string
+          target_go_live: string | null
+          territory: string
+          trading_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          address?: string | null
+          archived_at?: string | null
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          legal_name?: string | null
+          manager_email?: string | null
+          manager_name?: string | null
+          manager_phone?: string | null
+          parent_site_id?: string | null
+          postcode?: string | null
+          project_id?: string | null
+          site_name: string
+          site_type?: string
+          status?: string
+          target_go_live?: string | null
+          territory?: string
+          trading_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          address?: string | null
+          archived_at?: string | null
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          legal_name?: string | null
+          manager_email?: string | null
+          manager_name?: string | null
+          manager_phone?: string | null
+          parent_site_id?: string | null
+          postcode?: string | null
+          project_id?: string | null
+          site_name?: string
+          site_type?: string
+          status?: string
+          target_go_live?: string | null
+          territory?: string
+          trading_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       checklist_template_items: {
         Row: {
@@ -505,6 +721,7 @@ export type Database = {
       crm_accounts: {
         Row: {
           account_type: string
+          client_kind: string
           company_number: string | null
           created_at: string
           email: string | null
@@ -516,9 +733,11 @@ export type Database = {
           notes: string | null
           owner_id: string | null
           owner_label: string | null
+          parent_account_id: string | null
           phone: string | null
           project_id: string | null
           risk_rating: string | null
+          service_status: string
           stage: string
           tax_identifier: string | null
           territory: string
@@ -528,6 +747,7 @@ export type Database = {
         }
         Insert: {
           account_type: string
+          client_kind?: string
           company_number?: string | null
           created_at?: string
           email?: string | null
@@ -539,9 +759,11 @@ export type Database = {
           notes?: string | null
           owner_id?: string | null
           owner_label?: string | null
+          parent_account_id?: string | null
           phone?: string | null
           project_id?: string | null
           risk_rating?: string | null
+          service_status?: string
           stage?: string
           tax_identifier?: string | null
           territory: string
@@ -551,6 +773,7 @@ export type Database = {
         }
         Update: {
           account_type?: string
+          client_kind?: string
           company_number?: string | null
           created_at?: string
           email?: string | null
@@ -562,9 +785,11 @@ export type Database = {
           notes?: string | null
           owner_id?: string | null
           owner_label?: string | null
+          parent_account_id?: string | null
           phone?: string | null
           project_id?: string | null
           risk_rating?: string | null
+          service_status?: string
           stage?: string
           tax_identifier?: string | null
           territory?: string
@@ -573,6 +798,13 @@ export type Database = {
           website?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "crm_accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "crm_accounts_project_id_fkey"
             columns: ["project_id"]
@@ -1824,6 +2056,126 @@ export type Database = {
           },
         ]
       }
+      project_lifecycle_items: {
+        Row: {
+          approval_required: boolean
+          approval_status: string
+          archived_at: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          evidence_url: string | null
+          id: string
+          notes: string | null
+          owner_id: string | null
+          priority: string
+          project_id: string
+          reviewer_id: string | null
+          status: string
+          title: string
+          updated_at: string
+          workstream: string
+        }
+        Insert: {
+          approval_required?: boolean
+          approval_status?: string
+          archived_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          evidence_url?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string | null
+          priority?: string
+          project_id: string
+          reviewer_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          workstream: string
+        }
+        Update: {
+          approval_required?: boolean
+          approval_status?: string
+          archived_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          evidence_url?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string | null
+          priority?: string
+          project_id?: string
+          reviewer_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          workstream?: string
+        }
+        Relationships: []
+      }
+      project_profiles: {
+        Row: {
+          archived_at: string | null
+          brand_name: string
+          business_plan: string | null
+          created_at: string
+          features_status: string
+          launch_owner_id: string | null
+          legal_name: string | null
+          payer_model: string | null
+          pricing_summary: string | null
+          primary_territory: string
+          project_id: string
+          service_summary: string | null
+          slogan: string | null
+          target_customers: string | null
+          trademark_status: string
+          ui_ux_status: string
+          updated_at: string
+        }
+        Insert: {
+          archived_at?: string | null
+          brand_name: string
+          business_plan?: string | null
+          created_at?: string
+          features_status?: string
+          launch_owner_id?: string | null
+          legal_name?: string | null
+          payer_model?: string | null
+          pricing_summary?: string | null
+          primary_territory?: string
+          project_id: string
+          service_summary?: string | null
+          slogan?: string | null
+          target_customers?: string | null
+          trademark_status?: string
+          ui_ux_status?: string
+          updated_at?: string
+        }
+        Update: {
+          archived_at?: string | null
+          brand_name?: string
+          business_plan?: string | null
+          created_at?: string
+          features_status?: string
+          launch_owner_id?: string | null
+          legal_name?: string | null
+          payer_model?: string | null
+          pricing_summary?: string | null
+          primary_territory?: string
+          project_id?: string
+          service_summary?: string | null
+          slogan?: string | null
+          target_customers?: string | null
+          trademark_status?: string
+          ui_ux_status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       project_compliance: {
         Row: {
           cost_gbp: number | null
@@ -3047,6 +3399,7 @@ export type Database = {
         Returns: boolean
       }
       can_manage_operations: { Args: { _user_id: string }; Returns: boolean }
+      can_view_back_office: { Args: { _user_id: string }; Returns: boolean }
       can_view_operations: { Args: { _user_id: string }; Returns: boolean }
       can_view_project: {
         Args: { _project_id: string; _user_id: string }

@@ -10,6 +10,10 @@ export function hasAdminAccess(roles: string[]) {
   return roles.includes('admin');
 }
 
+export function hasBackOfficeReadAccess(roles: string[]) {
+  return roles.some((role) => ['admin', 'project_manager', 'finance'].includes(role));
+}
+
 export function getActionUrgency(date: string | null, now = new Date()) {
   if (!date) return { label: 'Schedule', style: 'bg-muted text-muted-foreground', order: 3 };
   const dueDate = new Date(`${date}T00:00:00`);

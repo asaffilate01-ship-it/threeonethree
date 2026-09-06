@@ -58,6 +58,8 @@ export default function MobileBottomNav() {
             {[
               ['/crm', 'CRM account'],
               ['/case-desk', 'Case / approval'],
+              ['/launch-control', 'Project lifecycle'],
+              ['/client-network', 'Client network'],
               ['/compliance', 'Compliance'],
               ['/partners', 'Third party'],
               ['/marketing', 'Campaign plan'],

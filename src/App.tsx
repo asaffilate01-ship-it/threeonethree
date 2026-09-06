@@ -8,7 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import AppShell from "@/components/layout/AppShell";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
-import { AdminAccessGate, OperationsAccessGate } from "@/components/access/AccessGate";
+import { AdminAccessGate, BackOfficeAccessGate, OperationsAccessGate } from "@/components/access/AccessGate";
 
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Projects = lazy(() => import("@/pages/Projects"));
@@ -30,6 +30,9 @@ const Marketing = lazy(() => import("@/pages/Marketing"));
 const Compliance = lazy(() => import("@/pages/Compliance"));
 const ActionCentre = lazy(() => import("@/pages/ActionCentre"));
 const CaseDesk = lazy(() => import("@/pages/CaseDesk"));
+const LaunchControl = lazy(() => import("@/pages/LaunchControl"));
+const ClientNetwork = lazy(() => import("@/pages/ClientNetwork"));
+const BackOffice = lazy(() => import("@/pages/BackOffice"));
 
 const queryClient = new QueryClient();
 
@@ -57,6 +60,9 @@ function ProtectedRoutes() {
         <Route path="/work-board" element={<OperationsAccessGate><WorkBoard /></OperationsAccessGate>} />
         <Route path="/actions" element={<OperationsAccessGate><ActionCentre /></OperationsAccessGate>} />
         <Route path="/case-desk" element={<OperationsAccessGate><CaseDesk /></OperationsAccessGate>} />
+        <Route path="/launch-control" element={<OperationsAccessGate><LaunchControl /></OperationsAccessGate>} />
+        <Route path="/client-network" element={<OperationsAccessGate><ClientNetwork /></OperationsAccessGate>} />
+        <Route path="/back-office" element={<BackOfficeAccessGate><BackOffice /></BackOfficeAccessGate>} />
         <Route path="/crm" element={<OperationsAccessGate><Crm /></OperationsAccessGate>} />
         <Route path="/compliance" element={<OperationsAccessGate><Compliance /></OperationsAccessGate>} />
         <Route path="/partners" element={<OperationsAccessGate><Partners /></OperationsAccessGate>} />
