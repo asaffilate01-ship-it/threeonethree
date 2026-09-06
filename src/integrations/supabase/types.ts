@@ -63,6 +63,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "access_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "access_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "access_requests_requested_by_fkey"
             columns: ["requested_by"]
             isOneToOne: false
@@ -178,7 +192,50 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "approval_requests_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "operational_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_evidence_id_fkey"
+            columns: ["evidence_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_register"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       case_updates: {
         Row: {
@@ -914,6 +971,108 @@ export type Database = {
           },
         ]
       }
+      evidence_register: {
+        Row: {
+          account_id: string | null
+          approved_at: string | null
+          case_id: string | null
+          category: string
+          checksum: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          expires_on: string | null
+          file_url: string
+          id: string
+          owner_id: string | null
+          project_id: string | null
+          review_due: string | null
+          reviewer_id: string | null
+          status: string
+          title: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          account_id?: string | null
+          approved_at?: string | null
+          case_id?: string | null
+          category: string
+          checksum?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expires_on?: string | null
+          file_url: string
+          id?: string
+          owner_id?: string | null
+          project_id?: string | null
+          review_due?: string | null
+          reviewer_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          account_id?: string | null
+          approved_at?: string | null
+          case_id?: string | null
+          category?: string
+          checksum?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expires_on?: string | null
+          file_url?: string
+          id?: string
+          owner_id?: string | null
+          project_id?: string | null
+          review_due?: string | null
+          reviewer_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_register_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_register_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "operational_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_register_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_register_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_register_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hosting: {
         Row: {
           annual_cost_gbp: number | null
@@ -999,72 +1158,6 @@ export type Database = {
           name?: string
           notes?: string | null
           vendor?: string | null
-        }
-        Relationships: []
-      }
-      evidence_register: {
-        Row: {
-          account_id: string | null
-          approved_at: string | null
-          case_id: string | null
-          category: string
-          checksum: string | null
-          created_at: string
-          created_by: string | null
-          description: string | null
-          expires_on: string | null
-          file_url: string
-          id: string
-          owner_id: string | null
-          project_id: string | null
-          review_due: string | null
-          reviewer_id: string | null
-          status: string
-          title: string
-          updated_at: string
-          version: string
-        }
-        Insert: {
-          account_id?: string | null
-          approved_at?: string | null
-          case_id?: string | null
-          category: string
-          checksum?: string | null
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          expires_on?: string | null
-          file_url: string
-          id?: string
-          owner_id?: string | null
-          project_id?: string | null
-          review_due?: string | null
-          reviewer_id?: string | null
-          status?: string
-          title: string
-          updated_at?: string
-          version?: string
-        }
-        Update: {
-          account_id?: string | null
-          approved_at?: string | null
-          case_id?: string | null
-          category?: string
-          checksum?: string | null
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          expires_on?: string | null
-          file_url?: string
-          id?: string
-          owner_id?: string | null
-          project_id?: string | null
-          review_due?: string | null
-          reviewer_id?: string | null
-          status?: string
-          title?: string
-          updated_at?: string
-          version?: string
         }
         Relationships: []
       }
@@ -1486,7 +1579,36 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "operational_cases_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_launch_readiness"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_burn"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       operations_audit_log: {
         Row: {
