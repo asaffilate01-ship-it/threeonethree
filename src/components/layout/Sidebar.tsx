@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, FolderKanban, ListTodo, PoundSterling,
   Globe, Puzzle, ClipboardList, BarChart3, ChevronLeft, ChevronRight, LogOut, Bug, Users,
-  Building2, ContactRound, Network, Megaphone, Workflow
+  Building2, ContactRound, Network, Megaphone, Workflow, ShieldCheck, BellRing
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,7 +14,9 @@ const NAV_ITEMS = [
   { path: '/portfolio',     label: 'Portfolio Register', icon: Building2 },
   { path: '/operations',    label: 'Team & Operations', icon: Users },
   { path: '/work-board',    label: 'Operations Board', icon: Workflow },
+  { path: '/actions',       label: 'Action Centre', icon: BellRing },
   { path: '/crm',           label: 'Clients & CRM', icon: ContactRound },
+  { path: '/compliance',    label: 'Compliance', icon: ShieldCheck },
   { path: '/partners',      label: 'Third Parties', icon: Network },
   { path: '/marketing',     label: 'Marketing & Sales', icon: Megaphone },
   { path: '/tasks',         label: 'Tasks',         icon: ListTodo },

@@ -7,9 +7,11 @@ The application now includes:
 - A 104-project canonical portfolio register.
 - UK/Germany staffing and responsibilities.
 - An auditable operations board for employees, agents, advisers and third parties.
-- CRM schema for organisations, contacts, deals and client onboarding.
-- Compliance and corporate-registration registers.
-- Third-party/provider actions, evidence, dependencies and renewals.
+- Editable CRM accounts with contacts, deals, activity history and eight-stage client onboarding.
+- Compliance and corporate-registration registers with risk, review, due-date and renewal tracking.
+- Third-party/provider actions, evidence, dependencies, qualification needs and renewals.
+- A management action centre combining overdue and upcoming CRM, compliance, provider and operating work.
+- Editable hiring status and filled headcount against the UK, Germany and group staffing plan.
 - Separate gated marketing and sales planning.
 - Existing project, task, cost, infrastructure, integration, QA and reporting modules.
 - A development-only login shortcut that pre-fills the local admin account.
@@ -23,7 +25,7 @@ npm install
 npm run dev
 ```
 
-Apply all Supabase migrations before shared CRM editing. The interface falls back to a read-only operating blueprint if the new operations tables are not yet available.
+Apply all Supabase migrations before using the CRM workspaces. Internal operations records are visible only to staff roles; administrators and project managers can edit them, while finance and viewer roles are read-only and partner accounts cannot access the portfolio-wide CRM data.
 
 The development login shortcut is compiled only when `import.meta.env.DEV` is true. It pre-fills `admin@groupcontrol.app` / `Admin123!`; the account itself must exist in the development Supabase project. Never create or use this credential in production.
 

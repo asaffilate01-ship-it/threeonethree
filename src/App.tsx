@@ -22,6 +22,8 @@ import Partners from "@/pages/Partners";
 import WorkBoard from "@/pages/WorkBoard";
 import Crm from "@/pages/Crm";
 import Marketing from "@/pages/Marketing";
+import Compliance from "@/pages/Compliance";
+import ActionCentre from "@/pages/ActionCentre";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -49,7 +51,9 @@ function ProtectedRoutes() {
         <Route path="/portfolio" element={<PortfolioRegistry />} />
         <Route path="/operations" element={<Operations />} />
         <Route path="/work-board" element={<WorkBoard />} />
+        <Route path="/actions" element={<ActionCentre />} />
         <Route path="/crm" element={<Crm />} />
+        <Route path="/compliance" element={<Compliance />} />
         <Route path="/partners" element={<Partners />} />
         <Route path="/marketing" element={<Marketing />} />
         <Route path="/tasks" element={<Tasks />} />
