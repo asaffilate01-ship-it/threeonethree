@@ -1,3 +1,4 @@
+import { PortfolioMarketServices } from "@/components/PortfolioMarketServices";
 import { motion } from 'framer-motion';
 import { useProjects, useTasks, useLaunchReadiness, useProjectBurn, useDomains } from '@/hooks/useProjectData';
 import { useActionCentre } from '@/hooks/useOperationsWorkspace';
@@ -195,6 +196,7 @@ export default function Dashboard() {
           ))}
         </div>
       </motion.div>
+      <PortfolioMarketServices source="threeonethree" placement="dashboard" />
     </div>
   );
 }
