@@ -322,7 +322,7 @@ export default function LaunchControl() {
       </section>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
+        {([
           ["Overall readiness", `${progress}%`, ClipboardCheck],
           [
             "Approved gates",
@@ -340,7 +340,7 @@ export default function LaunchControl() {
             data.items.filter((item) => item.status === "blocked").length,
             CalendarClock,
           ],
-        ].map(([label, value, Icon]) => (
+        ] as const).map(([label, value, Icon]) => (
           <div key={String(label)} className="glass-card rounded-xl p-4">
             <Icon size={17} className="text-primary" />
             <div className="mt-3 text-2xl font-bold">{String(value)}</div>
