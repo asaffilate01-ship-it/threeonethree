@@ -1,7 +1,7 @@
 name: Impeccable UI source review (advisory)
 on:
   pull_request:
-    paths: ["src/**","DESIGN.md","PRODUCT.md","AGENTS.md",".github/workflows/design-quality.yml"]
+    paths: ["src/**","DESIGN.md","PRODUCT.md","AGENTS.md",".github/workflows/design-quality.yml","docs/portfolio-design-prs.json","scripts/design-pr-status.mjs"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,3 +17,9 @@ jobs:
       - name: Review source design patterns
         continue-on-error: true
         run: npx --yes impeccable@4.8.0 detect --github src/
+      - name: Validate portfolio design register and reporter offline
+        run: |
+          node --check scripts/design-pr-status.mjs
+          node scripts/design-pr-status.mjs --offline --wave all --output /tmp/portfolio-design-pr-status.md
+          test -s /tmp/portfolio-design-pr-status.md
+          grep -q "TaxNuvia" /tmp/portfolio-design-pr-status.md
