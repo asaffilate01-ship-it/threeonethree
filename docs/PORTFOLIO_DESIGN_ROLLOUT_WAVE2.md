@@ -13,8 +13,9 @@ All PRs were created on distinct `design/portfolio-craft-wave2-2026-10-31` branc
 - **LessonAhead:** Add skip-to-content and accessible mobile menu toggle semantics, expanded state and focus.
 - **iTechLounge:** Replace unsupported example performance/revenue figures with a clearly labelled fictional project-site preview and project process, improve primary CTAs.
 - **PracticeCraft:** Replace blank/inaccessible authentication-loading states with announced branded loading status, without bypassing guards.
+- **TaxNuvia:** Label the accountant/service search for assistive technology and improve visible keyboard focus and touch target on the search action.
 
-For the other **19 projects**, the PRs currently add `DESIGN.md`, `PRODUCT.md`, additive `AGENTS.md` and an advisory `.github/workflows/design-quality.yml`. These are **not** live UI redesigns. Use them as the authority for the next screen-by-screen work.
+For the other **18 projects**, the PRs currently add `DESIGN.md`, `PRODUCT.md`, additive `AGENTS.md` and an advisory `.github/workflows/design-quality.yml`. These are **not** live UI redesigns. Use them as the authority for the next screen-by-screen work.
 
 ## Wave 2 pull requests
 
@@ -25,7 +26,7 @@ For the other **19 projects**, the PRs currently add `DESIGN.md`, `PRODUCT.md`, 
 | iTechLounge | [digital-creations-hub #2](https://github.com/asaffilate01-ship-it/digital-creations-hub/pull/2) | UI code + design guidance |
 | PracticeCraft | [practicecraft-hub #5](https://github.com/asaffilate01-ship-it/practicecraft-hub/pull/5) | UI code + design guidance |
 | Kiezio | [kiezio #9](https://github.com/asaffilate01-ship-it/kiezio/pull/9) | Design guidance and CI baseline |
-| TaxNuvia | [your-accountant-finder #62](https://github.com/asaffilate01-ship-it/your-accountant-finder/pull/62) | Design guidance and CI baseline |
+| TaxNuvia | [your-accountant-finder #62](https://github.com/asaffilate01-ship-it/your-accountant-finder/pull/62) | UI code + design guidance |
 | SharedBricks | [propluxe-world #11](https://github.com/asaffilate01-ship-it/propluxe-world/pull/11) | Design guidance and CI baseline |
 | MotorEsq | [all-road-aid #5](https://github.com/asaffilate01-ship-it/all-road-aid/pull/5) | Design guidance and CI baseline |
 | AutoSouq | [autosouq #14](https://github.com/asaffilate01-ship-it/autosouq/pull/14) | Design guidance and CI baseline |
