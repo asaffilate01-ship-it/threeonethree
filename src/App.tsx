@@ -20,6 +20,7 @@ const Integrations = lazy(() => import("@/pages/Integrations"));
 const Checklists = lazy(() => import("@/pages/Checklists"));
 const Reports = lazy(() => import("@/pages/Reports"));
 const QaDashboard = lazy(() => import("@/pages/QaDashboard"));
+const DesignRollout = lazy(() => import("@/pages/DesignRollout"));
 const UserManagement = lazy(() => import("@/pages/UserManagement"));
 const Operations = lazy(() => import("@/pages/Operations"));
 const PortfolioRegistry = lazy(() => import("@/pages/PortfolioRegistry"));
@@ -74,6 +75,7 @@ function ProtectedRoutes() {
         <Route path="/checklists" element={<Checklists />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/qa" element={<QaDashboard />} />
+        <Route path="/design-rollout" element={<OperationsAccessGate><DesignRollout /></OperationsAccessGate>} />
         <Route path="/users" element={<AdminAccessGate><UserManagement /></AdminAccessGate>} />
       </Route>
       <Route path="*" element={<NotFound />} />

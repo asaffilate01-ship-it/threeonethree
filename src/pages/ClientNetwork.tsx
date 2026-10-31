@@ -318,7 +318,7 @@ export default function ClientNetwork() {
       </header>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
+        {([
           ["All clients", data.accounts.length, Building2],
           [
             "Sub-clients",
@@ -333,7 +333,7 @@ export default function ClientNetwork() {
               .length,
             CheckCircle2,
           ],
-        ].map(([label, value, Icon]) => (
+        ] as const).map(([label, value, Icon]) => (
           <div key={String(label)} className="glass-card rounded-xl p-4">
             <Icon size={17} className="text-primary" />
             <div className="mt-3 text-2xl font-bold">{String(value)}</div>

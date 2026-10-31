@@ -1,0 +1,315 @@
+// Read-only register snapshot generated from docs/portfolio-design-prs.json on 31 October 2026.
+// This is not live GitHub state; merging or deploying a PR does not update this snapshot.
+export const designPortfolioSnapshot = {
+  "recordedAt": "2026-10-31",
+  "entries": [
+    {
+      "wave": 1,
+      "brand": "Orvilo",
+      "repo": "asaffilate01-ship-it/webtemplates",
+      "pr": 4,
+      "uiCodeChange": true
+    },
+    {
+      "wave": 1,
+      "brand": "AhlNikah",
+      "repo": "asaffilate01-ship-it/ahl-nikkah",
+      "pr": 26,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "amityOS",
+      "repo": "asaffilate01-ship-it/care-connect",
+      "pr": 6,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Haccora",
+      "repo": "asaffilate01-ship-it/haccora",
+      "pr": 28,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "UniPathway",
+      "repo": "asaffilate01-ship-it/ascent-education-cloud",
+      "pr": 150,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Ilmvero",
+      "repo": "asaffilate01-ship-it/schooldash",
+      "pr": 22,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "StemCoach",
+      "repo": "asaffilate01-ship-it/stemcoach",
+      "pr": 21,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Nafsi",
+      "repo": "asaffilate01-ship-it/nafsiapp",
+      "pr": 36,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Zivvo",
+      "repo": "asaffilate01-ship-it/zivvo",
+      "pr": 28,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Kindelo",
+      "repo": "asaffilate01-ship-it/kindelo-uk",
+      "pr": 88,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Dishbee+ Pakistan",
+      "repo": "asaffilate01-ship-it/onynapp-pakistan",
+      "pr": 20,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Cafe 1 Connect",
+      "repo": "asaffilate01-ship-it/cafe1-connect-dash",
+      "pr": 54,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "EventPlanr UK",
+      "repo": "asaffilate01-ship-it/eventplanr2",
+      "pr": 23,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Courier Connect Hub",
+      "repo": "asaffilate01-ship-it/courier-connect-hub",
+      "pr": 37,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Native App Factory",
+      "repo": "asaffilate01-ship-it/native-build-studio",
+      "pr": 2,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "SkillFinch",
+      "repo": "asaffilate01-ship-it/care-quest-learn",
+      "pr": 40,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Lawquo",
+      "repo": "asaffilate01-ship-it/law-remix",
+      "pr": 8,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "Zoryn Rewards",
+      "repo": "asaffilate01-ship-it/zoryn-rewards-hub",
+      "pr": 3,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "ParkPunkt",
+      "repo": "asaffilate01-ship-it/steady-implementor",
+      "pr": 23,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "ONYN",
+      "repo": "asaffilate01-ship-it/onyn",
+      "pr": 8,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 1,
+      "brand": "EventPlanr Germany",
+      "repo": "asaffilate01-ship-it/eventplanrger",
+      "pr": 26,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "Omniqora",
+      "repo": "asaffilate01-ship-it/seamless-comms-suite",
+      "pr": 219,
+      "uiCodeChange": true
+    },
+    {
+      "wave": 2,
+      "brand": "LessonAhead",
+      "repo": "asaffilate01-ship-it/nectar-design-lab",
+      "pr": 36,
+      "uiCodeChange": true
+    },
+    {
+      "wave": 2,
+      "brand": "iTechLounge",
+      "repo": "asaffilate01-ship-it/digital-creations-hub",
+      "pr": 2,
+      "uiCodeChange": true
+    },
+    {
+      "wave": 2,
+      "brand": "PracticeCraft",
+      "repo": "asaffilate01-ship-it/practicecraft-hub",
+      "pr": 5,
+      "uiCodeChange": true
+    },
+    {
+      "wave": 2,
+      "brand": "Kiezio",
+      "repo": "asaffilate01-ship-it/kiezio",
+      "pr": 9,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "TaxNuvia",
+      "repo": "asaffilate01-ship-it/your-accountant-finder",
+      "pr": 62,
+      "uiCodeChange": true
+    },
+    {
+      "wave": 2,
+      "brand": "SharedBricks",
+      "repo": "asaffilate01-ship-it/propluxe-world",
+      "pr": 11,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "MotorEsq",
+      "repo": "asaffilate01-ship-it/all-road-aid",
+      "pr": 5,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "AutoSouq",
+      "repo": "asaffilate01-ship-it/autosouq",
+      "pr": 14,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "FleetPulse / DDelivery 3PL",
+      "repo": "asaffilate01-ship-it/ddelivery3pl",
+      "pr": 3,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "TaxCenda",
+      "repo": "asaffilate01-ship-it/usataxlounge",
+      "pr": 2,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "Premisora",
+      "repo": "asaffilate01-ship-it/premisora-compliance-hub",
+      "pr": 1,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "HMOFlow",
+      "repo": "asaffilate01-ship-it/hmo-buddy-pro",
+      "pr": 1,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "Product Pass Pro",
+      "repo": "asaffilate01-ship-it/pass-product-ready",
+      "pr": 1,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "Rettio",
+      "repo": "asaffilate01-ship-it/rettio",
+      "pr": 1,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "TraderOS",
+      "repo": "asaffilate01-ship-it/jobflow-tradehub",
+      "pr": 12,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "Group Control",
+      "repo": "asaffilate01-ship-it/threeonethree",
+      "pr": 2,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "BeraterMarkt",
+      "repo": "asaffilate01-ship-it/professional-accountant-link",
+      "pr": 1,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "ZorynCom",
+      "repo": "asaffilate01-ship-it/zoryn-com-chat",
+      "pr": 17,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "Viazeno",
+      "repo": "asaffilate01-ship-it/transfer-compare",
+      "pr": 2,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "Schonova",
+      "repo": "asaffilate01-ship-it/delightful-dash-suite",
+      "pr": 2,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "NearCura",
+      "repo": "asaffilate01-ship-it/nearcura-care-connect",
+      "pr": 1,
+      "uiCodeChange": false
+    },
+    {
+      "wave": 2,
+      "brand": "Food Safety Hub",
+      "repo": "asaffilate01-ship-it/food-safety-hub",
+      "pr": 1,
+      "uiCodeChange": false
+    }
+  ]
+} as const;

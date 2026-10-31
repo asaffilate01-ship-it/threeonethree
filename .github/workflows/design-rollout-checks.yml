@@ -1,0 +1,31 @@
+name: Design rollout UI checks
+on:
+  pull_request:
+    paths:
+      - "src/pages/DesignRollout.tsx"
+      - "src/data/designPortfolioSnapshot.ts"
+      - "src/test/designRollout.test.tsx"
+      - "src/App.tsx"
+      - "src/components/layout/navigation.ts"
+      - ".github/workflows/design-rollout-checks.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install reproducible dependencies
+        run: npm ci
+      - name: TypeScript
+        run: npx tsc --noEmit -p tsconfig.app.json
+      - name: All existing unit tests
+        run: npm test
+      - name: Production build
+        run: npm run build
