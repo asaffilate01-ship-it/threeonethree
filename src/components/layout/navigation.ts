@@ -8,6 +8,7 @@ import {
   FolderKanban,
   Globe,
   LayoutDashboard,
+  Palette,
   ListTodo,
   Inbox,
   Megaphone,
@@ -43,6 +44,7 @@ export const NAV_ITEMS = [
   { path: '/integrations', label: 'Integrations', icon: Puzzle },
   { path: '/checklists', label: 'Checklists', icon: ClipboardList },
   { path: '/qa', label: 'QA & Testing', icon: Bug },
+  { path: '/design-rollout', label: 'Design Rollout', icon: Palette },
   { path: '/users', label: 'Users & Roles', icon: Users },
   { path: '/reports', label: 'Reports', icon: BarChart3 },
 ] as const;
