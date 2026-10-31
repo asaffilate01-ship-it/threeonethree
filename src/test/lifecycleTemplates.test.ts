@@ -3,14 +3,14 @@ import { CLIENT_ONBOARDING_TEMPLATE, PROJECT_LIFECYCLE_TEMPLATE, lifecycleProgre
 
 describe('portfolio lifecycle templates', () => {
   it('covers the required project launch workstreams', () => {
-    const streams = new Set(PROJECT_LIFECYCLE_TEMPLATE.map(([stream]) => stream));
+    const streams = new Set<string>(PROJECT_LIFECYCLE_TEMPLATE.map(([stream]) => stream));
     for (const required of ['Strategy', 'Brand', 'Product', 'Testing', 'Legal', 'Compliance', 'Marketing', 'Sales', 'Client Operations', 'Integrations', 'Communications', 'Finance', 'Administration', 'People']) {
       expect(streams.has(required)).toBe(true);
     }
   });
 
   it('gives every client and branch commercial, compliance, technical and growth onboarding', () => {
-    const streams = new Set(CLIENT_ONBOARDING_TEMPLATE.map(([stream]) => stream));
+    const streams = new Set<string>(CLIENT_ONBOARDING_TEMPLATE.map(([stream]) => stream));
     for (const required of ['Commercial', 'Identity', 'Compliance', 'Configuration', 'Integrations', 'Communications', 'Training', 'Testing', 'Go Live', 'Service', 'Growth']) {
       expect(streams.has(required)).toBe(true);
     }
