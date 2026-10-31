@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { useActionCentre } from '@/hooks/useOperationsWorkspace';
 import { getActionUrgency } from '@/lib/operationsWorkspace';
 import { cn } from '@/lib/utils';
+import { ActionButton } from '@/components/portfolio-ui';
 
 export default function ActionCentre() {
-  const { data: items = [], isLoading, error } = useActionCentre();
+  const { data: items = [], isLoading, isFetching, error, refetch } = useActionCentre();
   const [source, setSource] = useState('All');
   const [search, setSearch] = useState('');
   const filtered = useMemo(() => items.filter((item) => (source === 'All' || item.source === source) && `${item.title} ${item.context} ${item.status}`.toLowerCase().includes(search.toLowerCase())).sort((a, b) => getActionUrgency(a.date).order - getActionUrgency(b.date).order), [items, search, source]);
@@ -14,9 +15,32 @@ export default function ActionCentre() {
   const nextSeven = items.filter((item) => getActionUrgency(item.date).order === 1).length;
   const unscheduled = items.filter((item) => !item.date).length;
   if (isLoading) return <div className="min-h-[60vh] flex items-center justify-center text-sm text-muted-foreground">Loading…</div>;
-  if (error) return <div className="text-sm text-destructive">Action centre could not load: {error.message}</div>;
+  if (error) return (
+    <section role="alert" className="glass-card mx-auto max-w-xl rounded-2xl p-6">
+      <h1 className="font-semibold text-destructive">Action centre could not be loaded</h1>
+      <p className="mt-2 text-sm text-muted-foreground">The work queue is unavailable. No actions have been marked complete.</p>
+      <ActionButton
+        tone="secondary"
+        pending={isFetching}
+        pendingLabel="Retrying…"
+        className="mt-4"
+        onClick={() => { void refetch(); }}
+      >
+        Try again
+      </ActionButton>
+    </section>
+  );
   return <div className="space-y-6 max-w-7xl">
-    <div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Management action centre</p><h1 className="text-2xl font-bold tracking-tight mt-1">What needs attention</h1><p className="text-sm text-muted-foreground mt-1">One queue for staff work, client follow-ups, compliance deadlines and third-party dependencies.</p></div>
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Management action centre</p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight">What needs attention</h1>
+        <p className="mt-1 text-sm text-muted-foreground">One queue for staff work, client follow-ups, compliance deadlines and third-party dependencies.</p>
+      </div>
+      <ActionButton tone="secondary" pending={isFetching} pendingLabel="Refreshing…" onClick={() => { void refetch(); }}>
+        Refresh actions
+      </ActionButton>
+    </div>
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{[{ label: 'Open actions', value: items.length, icon: CalendarClock }, { label: 'Overdue', value: overdue, icon: AlertTriangle }, { label: 'Due in 7 days', value: nextSeven, icon: CalendarClock }, { label: 'Need a date', value: unscheduled, icon: CheckCircle2 }].map(({ label, value, icon: Icon }) => <div key={label} className="glass-card rounded-xl p-4"><Icon size={17} className={label === 'Overdue' && value ? 'text-destructive' : 'text-primary'} /><div className="text-2xl font-bold mt-3">{value}</div><div className="text-xs text-muted-foreground">{label}</div></div>)}</div>
     <div className="space-y-3 md:flex md:flex-wrap md:gap-3 md:space-y-0"><label className="flex min-h-11 items-center gap-2 rounded-xl border border-border/50 bg-muted/20 px-3 md:flex-1 md:max-w-sm"><Search size={14} /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search actions or dependencies" className="w-full bg-transparent text-sm outline-none" /></label><div className="native-scroll flex gap-1 overflow-x-auto rounded-xl border border-border/50 bg-muted/20 p-1">{['All', 'Project', 'Client', 'Work', 'CRM', 'Compliance', 'Third party', 'Case', 'Approval', 'Evidence', 'Back office'].map((item) => <button key={item} onClick={() => setSource(item)} className={cn('min-h-9 whitespace-nowrap rounded-lg px-3 text-xs', source === item ? 'bg-background shadow-sm' : 'text-muted-foreground')}>{item}</button>)}</div></div>
     <div className="space-y-3 md:hidden">{filtered.map((item) => { const due = getActionUrgency(item.date); return <Link key={`${item.source}-${item.id}`} to={item.link} className="glass-card block rounded-2xl p-4 active:border-primary/40"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><div className="text-sm font-semibold text-foreground">{item.title}</div><div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.context}</div></div><span className={cn('shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-[10px] font-medium', due.style)}>{due.label}</span></div><div className="mt-3 flex items-center gap-2 text-[10px]"><span className="rounded-md bg-primary/10 px-2 py-1 font-semibold text-primary">{item.source}</span><span className="capitalize text-muted-foreground">{item.status.replace('_', ' ')}</span><span className="ml-auto capitalize text-muted-foreground">{item.priority}</span></div></Link>})}{!filtered.length && <div className="py-12 text-center text-sm text-muted-foreground">No actions match this view</div>}</div>

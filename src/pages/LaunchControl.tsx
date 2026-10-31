@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   BadgeCheck,
@@ -322,7 +323,7 @@ export default function LaunchControl() {
       </section>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
+        {([
           ["Overall readiness", `${progress}%`, ClipboardCheck],
           [
             "Approved gates",
@@ -340,7 +341,7 @@ export default function LaunchControl() {
             data.items.filter((item) => item.status === "blocked").length,
             CalendarClock,
           ],
-        ].map(([label, value, Icon]) => (
+        ] as Array<[string, string | number, LucideIcon]>).map(([label, value, Icon]) => (
           <div key={String(label)} className="glass-card rounded-xl p-4">
             <Icon size={17} className="text-primary" />
             <div className="mt-3 text-2xl font-bold">{String(value)}</div>
