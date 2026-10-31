@@ -1,0 +1,33 @@
+name: Group Control Kitchen UI quality
+
+on:
+  pull_request:
+    paths:
+      - "src/pages/ActionCentre.tsx"
+      - "src/components/portfolio-ui/**"
+      - ".github/workflows/group-control-ui-quality.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/pages/ActionCentre.tsx"
+      - "src/components/portfolio-ui/**"
+      - ".github/workflows/group-control-ui-quality.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  web-ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # pinned v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # pinned v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx tsc --noEmit -p tsconfig.app.json
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
